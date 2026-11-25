@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diagnose</title>
+<meta name="robots" content="noindex">
+<style>
+html,body{margin:0;background:#fff;color:#000;font:15px/1.5 system-ui,sans-serif}
+main{padding:12px}
+button{font:inherit;padding:10px 14px;border-radius:8px;border:1px solid #888;background:#fff;margin:6px 0}
+pre{white-space:pre-wrap;font-size:13px;margin:0;background:#f3f3f3;padding:10px;border-radius:8px}
+</style>
+</head>
+<body>
+<main>
+<button id="kopie" type="button">Kopieer de tekst</button>
+<pre id="out">Bezig met meten...</pre>
+</main>
+<script>
+(function(){
+  var out=document.getElementById('out');
+  function desc(e){
+    if(!e)return 'geen element';
+    var cs=getComputedStyle(e),r=e.getBoundingClientRect();
+    return e.tagName+' class="'+String(e.className).slice(0,90)+'" links='+Math.round(r.left)+' breed='+Math.round(r.width)+' pos='+cs.position+' display='+cs.display+' bg='+cs.backgroundColor;
+  }
+  function run(){
+    var lines=[];
+    lines.push('innerWidth='+innerWidth+' innerHeight='+innerHeight+' landscape='+matchMedia('(orientation:landscape)').matches+' coarse='+matchMedia('(pointer:coarse)').matches);
+    var p=document.createElement('div');p.style.cssText='position:absolute;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)';document.body.appendChild(p);
+    var cs=getComputedStyle(p);lines.push('safe-area links='+cs.paddingLeft+' rechts='+cs.paddingRight+' boven='+cs.paddingTop+' onder='+cs.paddingBottom);
+    var f=document.createElement('iframe');f.src='/';f.style.cssText='position:fixed;left:0;top:0;width:'+innerWidth+'px;height:'+innerHeight+'px;visibility:hidden';document.body.appendChild(f);
+    f.onload=function(){setTimeout(function(){
+      try{
+        var d=f.contentDocument;
+        lines.push('elementFromPoint(20,200) = '+desc(d.elementFromPoint(20,200)));
+        lines.push('elementFromPoint(100,200) = '+desc(d.elementFromPoint(100,200)));
+        lines.push('elementFromPoint(300,200) = '+desc(d.elementFromPoint(300,200)));
+        var nav=d.querySelector('.onk-tabbar');lines.push('onk-tabbar = '+(nav?desc(nav):'niet aanwezig'));
+        var bar=d.querySelector('.fixed.inset-0 > div > div.relative.z-20');lines.push('kopbalk = '+(bar?desc(bar):'niet gevonden'));
+        var logo=d.querySelector('button.bible-logo-left');lines.push('logo = '+(logo?desc(logo):'niet aanwezig'));
+        var css=d.documentElement.className;lines.push('html class = '+css);
+      }catch(err){lines.push('fout: '+err)}
+      out.textContent=lines.join('\n');
+    },2500)};
+  }
+  document.getElementById('kopie').onclick=function(){var t=out.textContent;if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){document.getElementById('kopie').textContent='Gekopieerd'});};
+  run();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<script src="/onk-id.js?v=1"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QR-code | De Bijbel - De Samenkomst</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f4f6f7;--card:#ffffff;--ink:#1d2b33;--muted:#6b7a83;--line:#e3e8eb;--accent:#3c5e70;--hdr:#3c5e70}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+header{background:var(--hdr);color:#fff;padding-top:env(safe-area-inset-top)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px}
+.bar img{height:28px;width:auto;display:block}
+.bar a{color:#fff;text-decoration:none;font-size:14px;font-weight:500;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 14px}
+main{max-width:640px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:24px;font-weight:600;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 18px;margin-bottom:16px;text-align:center}
+.card img{display:block;width:min(100%,320px);height:auto;background:#fff;padding:12px;border-radius:12px;margin:0 auto}
+@media (min-width:760px){main{max-width:680px}}
+html.embed header{display:none}html.embed main{padding-top:8px}
+</style>
+<script>if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="/" style="border:0;padding:0"><img src="../img/brand/bijbel-online-logo.webp" alt="Bijbel Online"></a>
+    <a href="/" id="terug">Terug naar de Bijbel</a>
+  </div>
+</header>
+<main>
+  <h1 id="titel">QR-code</h1>
+  <p class="sub" id="sub">Scan deze code om De Bijbel op een ander apparaat te openen.</p>
+  <div class="card"><img id="qr" src="../img/brand/qr-desamenkomst.png" alt="QR-code naar deze site" width="640" height="640"></div>
+</main>
+<script>
+(function(){
+  var en=false;try{en=localStorage.getItem('bible-locale')==='en'}catch(e){}
+  if(en){document.documentElement.lang='en';document.getElementById('titel').textContent='QR code';document.getElementById('sub').textContent='Scan this code to open De Bijbel on another device.';document.getElementById('qr').alt='QR code to this site';document.title='QR code | De Bijbel - De Samenkomst';document.getElementById('terug').textContent='Back to the Bible'}
+  try{var r=localStorage.getItem('bible-auth-v1');if(r&&JSON.parse(r).user){var t=document.getElementById('terug');t.textContent=en?'Back to profile':'Terug naar profiel';t.setAttribute('href','/profiel/')}}catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html><html lang="nl"><meta charset="utf-8"><!--merk--><link rel="icon" type="image/png" sizes="512x512" href="/icon.png?v=bijbel6"><link rel="shortcut icon" type="image/png" href="/icon.png?v=bijbel6"><link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon.png?v=bijbel6"><meta name="apple-mobile-web-app-title" content="De Bijbel Online"><!--/merk--><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Laadschermen De Bijbel Online</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#f5f6f8;font:13px -apple-system,Helvetica,Arial,sans-serif}
+#ld{position:fixed;inset:0;background:#f5f6f8;z-index:5;display:flex;align-items:center;justify-content:center;transition:opacity .6s cubic-bezier(.4,0,.2,1);}
+#ld.off{opacity:0;pointer-events:none}
+#ld img{width:clamp(88px,13vmin,150px);height:auto;border-radius:22.5%;box-shadow:0 10px 30px rgba(20,40,70,.18);animation:br 2.4s ease-in-out infinite;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+#ld.off img{transform:scale(1.08)}
+@keyframes br{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+iframe{position:fixed;inset:0;width:100%;height:100%;border:0;opacity:0;z-index:1;transition:opacity .6s cubic-bezier(.4,0,.2,1)}
+iframe.on{opacity:1;z-index:2}
+nav{position:fixed;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(20,24,34,.55);backdrop-filter:blur(8px);z-index:9;transition:opacity .4s}
+#inf{position:fixed;top:54px;left:50%;transform:translateX(-50%);z-index:9;max-width:92vw;padding:10px 14px;border-radius:14px;background:rgba(20,24,34,.72);backdrop-filter:blur(8px);color:#fff;line-height:1.5;transition:opacity .4s;text-align:center}
+#inf.h{opacity:0;pointer-events:none}
+#inf b{font-weight:600}
+nav.h{opacity:0;pointer-events:none}
+nav button{all:unset;cursor:pointer;color:#fff;padding:5px 11px;border-radius:999px;font-weight:600}
+#mu{margin-left:4px}
+#vol{width:80px;accent-color:#fff;vertical-align:middle;margin:0 6px 0 2px;cursor:pointer}
+nav button.on{background:#fff;color:#14181f}
+</style>
+<body><audio id=mus src="inner-light.mp3" loop preload="auto"></audio><div id=ld><img src="../apple-touch-icon.png?v=bijbel6" alt=""></div><nav id=n class=h></nav><div id=inf class=h></div>
+<script src="periode.js"></script>
+<script>
+var T=[["Advent","1-Advent"],["Kerst","2-Kerst"],["Pasen","3-Pasen"],["Hemelvaart","4-Hemelvaart"],["Pinksteren","5-Pinksteren"],["Wit","0-Wit"]],n=document.getElementById("n"),ld=document.getElementById("ld"),cur=-1,tm,busy=0,t0=Date.now();
+var KEY=["advent","kerst","pasen","hemel","pink"];
+var ab=document.createElement("button");ab.textContent="Auto";ab.onclick=function(){auto(1)};n.appendChild(ab);
+T.forEach(function(t,i){var b=document.createElement("button");b.textContent=t[0];b.onclick=function(){go(i)};n.appendChild(b)});
+function mark(i){[].forEach.call(n.children,function(b,j){b.classList.toggle("on",j==i+1||(isAuto&&j==0))});if(!isAuto)try{history.replaceState(0,"","#"+T[i][0].toLowerCase())}catch(e){}}
+function go(i,fromAuto){
+  if(!fromAuto){isAuto=false;info(null,today())}
+  i=(i+T.length)%T.length; if(i==cur||busy)return; busy=1; var first=cur<0; cur=i; mark(i);
+  var old=document.querySelector("iframe.on"), f=document.createElement("iframe");
+  f.src=T[i][1]+"-animatie.html"; f.setAttribute("title",T[i][0]);
+  f.onload=function(){
+    var d=f.contentDocument&&f.contentDocument.fonts?f.contentDocument.fonts.ready:Promise.resolve();
+    d.then(function(){requestAnimationFrame(function(){requestAnimationFrame(function(){
+      f.classList.add("on"); if(old)old.classList.remove("on"); ld.classList.add("off");
+      setTimeout(function(){if(old)old.remove();busy=0;if(first)show()},650);
+    })})});
+  };
+  document.body.insertBefore(f,n);
+}
+function show(){n.classList.remove("h");clearTimeout(tm);tm=setTimeout(function(){if(cur<0)return;n.classList.add("h");document.getElementById("inf").classList.add("h")},3500)}
+addEventListener("keydown",function(e){if(e.key=="ArrowRight")go(cur+1);else if(e.key=="ArrowLeft")go(cur-1);else if(/^[1-6]$/.test(e.key))go(+e.key-1)});
+addEventListener("mousemove",show);addEventListener("touchstart",show);
+var isAuto=false,P=new URLSearchParams(location.search);
+function fmt(d){return d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"})}
+function today(){var q=P.get("datum");if(q&&/^\d{4}-\d{2}-\d{2}$/.test(q))return new Date(q+"T12:00");return new Date()}
+function info(p,d){var el=document.getElementById("inf"),h="";
+  if(isAuto){h=p?"Nu: <b>"+T[KEY.indexOf(p.k)][0]+"</b> ("+fmt(p.van)+" t/m "+fmt(p.tot)+")":"Nu geen periode actief: standaard laadscherm"}
+  else h="Handmatig gekozen. Kies Auto voor de periode van vandaag";
+  var cy=d?d.getFullYear():new Date().getFullYear(),yrs=[cy,cy+1].map(function(y){return "<b>"+y+"</b>: "+window.onkPerioden(y).sort(function(a,b){return a.van-b.van}).map(function(q){return T[KEY.indexOf(q.k)][0]+" "+fmt(q.van)+" - "+fmt(q.tot)}).join(" · ")}).join("<br>");
+  el.innerHTML=h+"<br><small style='opacity:.8'>"+yrs+"</small><br><a href='perioden.html' style='color:#9ad'>Alle jaren tot 2050 en verder</a>";el.classList.remove("h")}
+function auto(manual){
+  isAuto=true;mark(-1);var d=today(),p=window.onkPeriode(d);
+  try{history.replaceState(0,"",location.pathname+location.search)}catch(e){}
+  [].forEach.call(n.children,function(b,j){b.classList.toggle("on",j==0)});
+  info(p,d);show();
+  if(p){busy=0;go(KEY.indexOf(p.k),1)}
+}
+var h=location.hash.slice(1),s=T.findIndex(function(t){return t[0].toLowerCase()==h});
+if(s<0){auto()}else{isAuto=false;go(s)}
+
+/* Muziek: Inner Light (Kevin MacLeod, incompetech.com, CC BY 4.0) loopt bij elk laadscherm. Browsers starten geluid pas na een klik of toets. */
+var mus=document.getElementById("mus"),mu=document.createElement("button"),muOn=false;
+try{muOn=localStorage.getItem("onkMuziek")!=="uit"}catch(e){muOn=true}
+mu.id="mu";mu.title="Muziek aan of uit";n.appendChild(mu);
+function muShow(){mu.textContent=muOn&&!mus.paused?"♪ aan":(muOn?"♪ klik":"♪ uit")}
+function muPlay(){if(!muOn)return;var p=mus.play();if(p&&p.catch)p.catch(function(){});setTimeout(muShow,200)}
+mu.onclick=function(e){e.stopPropagation();muOn=!muOn;try{localStorage.setItem("onkMuziek",muOn?"aan":"uit")}catch(x){}if(muOn)muPlay();else mus.pause();muShow()};
+["pointerdown","keydown","touchstart"].forEach(function(ev){addEventListener(ev,function(){if(mus.paused)muPlay()},{once:false,passive:true})});
+
+var vol=document.createElement("input"),vv=50;vol.type="range";vol.min=0;vol.max=100;vol.step=1;vol.id="vol";vol.title="Volume";
+try{var sv=localStorage.getItem("onkVolume");if(sv!==null&&!isNaN(+sv))vv=Math.max(0,Math.min(100,+sv))}catch(e){}
+vol.value=vv;mus.volume=vv/100;n.appendChild(vol);
+vol.oninput=function(e){e.stopPropagation();vv=+vol.value;mus.volume=vv/100;try{localStorage.setItem("onkVolume",vv)}catch(x){}};
+vol.onpointerdown=function(e){e.stopPropagation()};
+muShow();muPlay();
+</script></html>

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Notities | De Samenkomst</title>
+<meta name="description" content="Maak notities in mappen, met je eigen tekst en Bijbelverzen op één pagina." />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" href="../icon.png?v=bijbel6" />
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=bijbel6" />
+<link rel="manifest" href="../site.webmanifest" />
+<meta name="theme-color" content="#3C5E70" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<style>
+:root{--ink:#1d2b33;--muted:#6b7a83;--line:#e3e8eb;--paper:#f4f6f7;--accent:#3c5e70;--card:#fff;--bar:calc(92px + env(safe-area-inset-bottom,0px))}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body.ed{background:#fff}
+html:has(body.ed){background:#fff}
+[hidden]{display:none!important}
+header{background:var(--accent);position:sticky;top:0;z-index:5;padding-top:env(safe-area-inset-top,0px)}
+.top{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;min-height:64px}
+.top .mid{flex:1;min-width:0;text-align:center;color:#fff}
+.top .mid b{display:block;font-size:17px;font-weight:700;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25;word-break:break-word}
+.top .mid small{display:block;font-size:13px;opacity:.75}
+.tb{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;padding:0}
+.tb svg{width:20px;height:20px}
+.tb.sp{visibility:hidden}
+.dl-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:80}.dl-sh{background:#fff;border-radius:18px 18px 0 0;width:min(520px,100%);padding:16px 18px 22px;box-shadow:0 8px 30px rgba(0,0,0,.16)}.dl-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.dl-x{width:32px;height:32px;border-radius:50%;border:0;background:#eaeef0;color:#3C5E70;font-size:18px;cursor:pointer}.dl-r{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-weight:600}.dl-t{font-size:13px;color:#6b7a83;margin:0 0 10px}.dl-l{width:100%;padding:10px;border:1px solid rgba(29,43,51,.15);border-radius:10px;font-size:13px;margin-bottom:10px}.dl-c{width:100%;padding:12px;border:0;border-radius:10px;background:#3C5E70;color:#fff;font-weight:600;cursor:pointer}
+.ed-only{display:none!important}
+body.ed .ed-only{display:inline-flex!important}
+.wrap{max-width:900px;margin:0 auto;padding:16px 16px calc(var(--bar) + 20px)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.chip svg{width:16px;height:16px;color:var(--muted)}
+.chip.on{background:#e7ecef;border-color:#cdd7dc}
+.groep{font-size:20px;font-weight:800;margin:20px 2px 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kaart{display:block;width:100%;text-align:left;border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer}
+.kaart .pv{height:150px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 13px;overflow:hidden;position:relative;transition:box-shadow .15s,border-color .15s}
+.kaart:hover .pv{border-color:#cbd5da;box-shadow:0 3px 12px rgba(29,43,51,.08)}
+.kaart .pv b{display:block;font-size:14px;margin-bottom:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.kaart .pv p{margin:0;font-size:12.5px;line-height:1.45;color:#4a5961;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.kaart .pv p.v{color:var(--accent);font-weight:600}
+.kaart .pv:after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(transparent,#fff)}
+.kaart .nm{display:block;text-align:center;font-size:14.5px;font-weight:700;margin:9px 4px 1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.kaart .dt{display:block;text-align:center;font-size:12.5px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.leeg{padding:60px 24px;text-align:center;color:var(--muted);font-size:16px;line-height:1.5}
+.leeg .ib{width:76px;height:76px;border-radius:24px;background:#e7eef4;color:var(--accent);display:grid;place-items:center;margin:0 auto 18px}
+.leeg .ib svg{width:38px;height:38px}
+.leeg b{display:block;color:var(--ink);font-size:20px;margin-bottom:8px}
+/* zwevende balk onderaan (zoals Apple Notities) */
+.fl{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:center;justify-content:center;pointer-events:none}
+.fl>*{pointer-events:auto}
+.pil{flex:1;max-width:560px;display:flex;align-items:center;gap:10px;height:56px;padding:0 18px;border-radius:999px;background:#fff;box-shadow:0 6px 24px rgba(29,43,51,.16);border:1px solid var(--line)}
+.pil svg{flex:none;width:22px;height:22px;color:var(--ink)}
+.pil input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:17px;color:var(--ink);outline:none}
+.pil button{border:0;background:none;font:inherit;font-size:16px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer;padding:0;height:100%}
+.pil.vers{flex:none}
+.rond{flex:none;width:56px;height:56px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 6px 24px rgba(29,43,51,.16);display:grid;place-items:center;color:var(--ink);cursor:pointer;padding:0}
+.rond svg{width:24px;height:24px}
+/* pagina */
+.pg{max-width:760px;margin:0 auto;padding:22px 20px calc(var(--bar) + 40px)}
+.titel{width:100%;border:0;background:transparent;font:inherit;font-size:32px;font-weight:800;color:var(--ink);outline:none;padding:2px 0;margin:0 0 6px}
+.titel::placeholder{color:#c4ccd1}
+.meta{color:var(--muted);font-size:13px;margin:0 0 14px}
+.body{min-height:calc(100vh - 260px);min-height:calc(100dvh - 260px);outline:none;font-size:18px;line-height:1.65;color:#2b3a43;word-break:break-word}
+.body>div{min-height:1.65em;white-space:pre-wrap}
+.body:empty:before{content:"Begin met typen…";color:#c4ccd1}
+.vb{cursor:pointer;margin:12px 0;padding:14px 16px 12px;background:var(--paper);border-radius:14px;border:1px solid var(--line);position:relative;-webkit-user-select:text;user-select:text;white-space:normal!important}
+.vb .r{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.vb .r a{flex:1;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none}
+.vb .r a:hover{text-decoration:underline}
+.vb .x{width:28px;height:28px;border-radius:50%;border:0;background:#e5eaed;color:var(--muted);font-size:16px;line-height:1;cursor:pointer;padding:0}
+.vb .t{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.65;color:var(--ink)}
+.vb .t sup{font-family:Inter,system-ui,sans-serif;font-size:.62em;font-weight:700;color:var(--accent);margin-right:.42em}
+.vb .t.kort{max-height:9.2em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.vb .mv{width:28px;height:28px;border-radius:50%;border:0;background:#e5eaed;color:var(--muted);display:grid;place-items:center;padding:0;cursor:pointer;margin-left:4px}
+.vb .m{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:6px 0 0}
+/* schermen (zelfde stijl als het versmenu) */
+.bg{position:fixed;inset:0;z-index:50;background:rgba(10,18,24,.45);display:flex;align-items:flex-end;justify-content:center}
+.sh{width:100%;max-width:520px;max-height:88vh;max-height:88dvh;overflow-y:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+@media(min-width:768px){.bg{align-items:center}.sh{border-radius:24px}}
+.sh .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sh .h b{font-size:18px}
+.sh .x{width:36px;height:36px;border-radius:50%;border:0;background:#f0f2f4;color:var(--ink);font-size:20px;cursor:pointer;line-height:1}
+.act{display:flex;align-items:center;gap:14px;width:100%;padding:14px 8px;border:0;border-top:1px solid var(--line);background:none;font:inherit;font-size:16px;color:var(--ink);text-align:left;cursor:pointer}
+.act:first-of-type{border-top:0}
+.act svg{flex:none;width:22px;height:22px;color:var(--accent)}
+.act.rood,.act.rood svg{color:#a8402f}
+.act small{display:block;color:var(--muted);font-size:13px}
+.in{width:100%;height:48px;border-radius:12px;border:1px solid #d5dde1;padding:0 14px;font:inherit;font-size:16px;color:var(--ink);background:#fff;outline:none;margin:4px 0 10px}
+.in:focus{border-color:var(--accent)}
+.knop{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;border:1px solid #cdd7dc;background:#eef2f4;color:var(--ink);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.hint{color:var(--muted);font-size:13px;margin:8px 2px}
+.res{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.rs{display:block;width:100%;text-align:left;border:0;background:none;border-radius:12px;padding:10px;font:inherit;color:var(--ink);cursor:pointer}
+.rs:hover{background:#f1f4f6}
+.rs b{display:block;font-size:15px;color:var(--accent)}
+.rs span{display:block;font-size:14px;color:var(--muted);line-height:1.45;margin-top:2px}
+.cc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.cc button{border:0;border-radius:999px;background:#eef2f4;padding:0 14px;height:36px;font:inherit;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px;margin-top:8px}
+.gr button{height:44px;border:0;border-radius:12px;background:#eef2f4;font:inherit;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:10px;background:#fff;color:var(--ink);border:1px solid var(--line);padding:12px 18px 12px 14px;border-radius:16px;font-size:15px;font-weight:600;box-shadow:0 8px 30px rgba(29,43,51,.16);width:max-content;max-width:calc(100vw - 32px)}.toast svg{flex:none;width:20px;height:20px;color:var(--accent)}
+.ro .vb .mv,.ro .vb .x,.ro #fl,.ro .ed-only,.ro #sh,.ro #ud,.ro #rd{display:none!important}
+#mn{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="top"><a class="tb" id="bk" href="/" aria-label="Terug"></a><div class="mid"><b id="kop">Notities</b><small id="sub"></small></div><button class="tb ed-only" id="ud" type="button" aria-label="Ongedaan maken"></button><button class="tb ed-only" id="rd" type="button" aria-label="Opnieuw"></button><button class="tb ed-only" id="sh" type="button" aria-label="Delen"></button><button class="tb" id="mn" type="button" aria-label="Meer"></button></div></header>
+<main id="app"></main>
+<div class="fl" id="fl"></div>
+<script src="/notities-kern.js?v=7"></script>
+<script>
+(function(){
+  var N=window.OnkN,E=N.esc,app=document.getElementById('app'),kop=document.getElementById('kop'),sub=document.getElementById('sub'),fl=document.getElementById('fl'),bk=document.getElementById('bk'),mn=document.getElementById('mn');
+  /* GEDEELD: deze pagina is dezelfde notitie-app, maar de notitie komt van de server. */
+  var SID=((location.hash||'').match(/s=([A-Za-z0-9]+)/)||[])[1]||null,SN=null,SSS=null,SMODE='read',SSAVE=null;
+  function sbSessieG(){try{var raw=localStorage.getItem('bible-auth-v1')||localStorage.getItem('sb-vodswfyhlwvhhkqewtap-auth-token');var j=raw?JSON.parse(raw):null;return j&&j.access_token&&j.user?j:null;}catch(e){return null;}}
+  function kanBewerkenG(){return !!(SSS&&SMODE==='edit');}
+  function SBH(tok){return {apikey:'sb_publishable_TWZO4LBJZCVPuXG9pAknyA_7gxtFNfu',Authorization:'Bearer '+(tok||'sb_publishable_TWZO4LBJZCVPuXG9pAknyA_7gxtFNfu'),'Content-Type':'application/json'};}
+  function SLAAOP(){if(!SN||!kanBewerkenG())return;clearTimeout(SSAVE);SSAVE=setTimeout(function(){fetch('https://vodswfyhlwvhhkqewtap.supabase.co/rest/v1/rpc/update_shared_note',{method:'POST',headers:SBH(SSS.access_token),body:JSON.stringify({p_id:SID,p_title:SN.title||'',p_blocks:SN.blocks||[]})}).catch(function(){});},600);}
+  N.note=function(id){return (SN&&id===SID)?SN:null;};
+  N.touch=function(n){if(SN&&n===SN)SLAAOP();};
+  function ic(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
+  var I={back:ic('<path d="M15 6l-6 6 6 6"/>'),more:ic('<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>'),search:ic('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>'),
+    compose:ic('<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H12M20 11v6.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11"/><path d="M18.5 3.5l2 2-8 8-3 1 1-3z"/>'),
+    folder:ic('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),verse:ic('<path d="M3.5 5.5C6 4.5 9 4.5 12 6c3-1.5 6-1.5 8.5-.5v13c-2.5-1-5.5-1-8.5.5-3-1.5-6-1.5-8.5-.5z"/><path d="M12 6v13.5"/>'),
+    note:N.ICONS.note,trash:ic('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'),edit:ic('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),plus:ic('<path d="M12 5v14M5 12h14"/>')};
+  var zoekTerm='',aktief='',editId=null,lastIdx=-1;
+  function hash(){var m=/^#(n|m)=(.+)$/.exec(location.hash);return m?{k:m[1],id:m[2]}:{k:'',id:''};}
+  function go(h){location.hash=h||'';}
+  function toast(t){var d=document.createElement('div');d.className='toast';d.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span>';d.lastChild.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove();},2400);}
+  window.addEventListener('hashchange',draw);
+
+  /* ---------- schermen ---------- */
+  function scherm(html,onclick){var bg=document.createElement('div');bg.className='bg';bg.innerHTML='<div class="sh" role="dialog">'+html+'</div>';document.body.appendChild(bg);
+    function sluit(){bg.remove();}
+    bg.addEventListener('click',function(e){if(e.target===bg||e.target.closest('[data-x]')){sluit();return;}if(onclick)onclick(e,sluit,bg);});return {bg:bg,sluit:sluit};}
+  function vraag(titel,waarde,knop,cb){var s=scherm('<div class="h"><b>'+E(titel)+'</b><button class="x" type="button" data-x aria-label="Sluiten">×</button></div><input class="in" id="vr" value="'+E(waarde||'')+'" autocomplete="off"><button class="knop" type="button" data-ok>'+E(knop)+'</button>',function(e,sluit,bg){if(e.target.closest('[data-ok]')){var v=bg.querySelector('#vr').value.trim();if(v){sluit();cb(v);}}});var i=s.bg.querySelector('#vr');i.focus();i.select();i.onkeydown=function(ev){if(ev.key==='Enter'){var v=i.value.trim();if(v){s.sluit();cb(v);}}};}
+  function acties(titel,lijst){var h='<div class="h"><b>'+E(titel)+'</b><button class="x" type="button" data-x aria-label="Sluiten">×</button></div>'+lijst.map(function(a,i){return '<button class="act'+(a.rood?' rood':'')+'" type="button" data-a="'+i+'">'+a.icon+'<span>'+E(a.t)+(a.s?'<small>'+E(a.s)+'</small>':'')+'</span></button>';}).join('');
+    scherm(h,function(e,sluit){var b=e.target.closest('[data-a]');if(b){sluit();lijst[+b.getAttribute('data-a')].fn();}});}
+  function bevestig(titel,tekst,knop,cb){scherm('<div class="h"><b>'+E(titel)+'</b><button class="x" type="button" data-x aria-label="Sluiten">×</button></div><p class="hint" style="font-size:15px">'+E(tekst)+'</p><button class="knop" type="button" data-ok style="color:#a8402f">'+E(knop)+'</button>',function(e,sluit){if(e.target.closest('[data-ok]')){sluit();cb();}});}
+
+  /* ---------- overzicht ---------- */
+  function dagGroep(t){var d=new Date(t),n=new Date();d.setHours(0,0,0,0);n.setHours(0,0,0,0);var v=Math.round((n-d)/864e5);return v<=0?'Vandaag':v===1?'Gisteren':v<=7?'Afgelopen 7 dagen':v<=30?'Afgelopen 30 dagen':'Eerder';}
+  function datum(t){var d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString((OnkEN()?'en-US':'nl-NL'),{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString((OnkEN()?'en-US':'nl-NL'),{day:'numeric',month:'short',year:d.getFullYear()===n.getFullYear()?undefined:'numeric'});}
+  function voorbeeld(n){var r=[];for(var i=0;i<n.blocks.length&&r.length<6;i++){var b=n.blocks[i];if(b.t==='text'){if(b.text.trim())r.push('<p>'+E(b.text.trim())+'</p>');}else r.push('<p class="v">'+E(N.label(b))+'</p>');}return r.join('')||'<p>'+(OnkEN()?'Empty note':'Lege notitie')+'</p>';}
+  function kaart(n,metMap){var f=N.state().folders.filter(function(x){return x.id===n.folder;})[0];return '<button class="kaart" type="button" data-n="'+n.id+'"><div class="pv"><b>'+E(n.title||OnkUn())+'</b>'+voorbeeld(n)+'</div><span class="nm">'+E(n.title||OnkUn())+'</span><span class="dt">'+E(datum(n.t))+(metMap&&f?' · '+E(f.name):'')+'</span></button>';}
+  function overzicht(){
+    var s=N.state(),h=hash();aktief=h.k==='m'?h.id:'';var f=s.folders.filter(function(x){return x.id===aktief;})[0];if(h.k==='m'&&!f){go('');return;}
+    document.body.classList.remove('ed');bk.innerHTML=I.back;bk.setAttribute('href',f?'#':'/');bk.onclick=f?function(e){e.preventDefault();go('');}:null;mn.innerHTML=I.more;mn.className='tb';
+    var term=zoekTerm.trim().toLowerCase();
+    var ns=s.notes.filter(function(n){return !aktief||n.folder===aktief;});
+    if(term)ns=ns.filter(function(n){return (n.title||'').toLowerCase().indexOf(term)>=0||n.blocks.some(function(b){return b.t==='text'&&b.text.toLowerCase().indexOf(term)>=0||b.t==='verse'&&N.label(b).toLowerCase().indexOf(term)>=0;});});
+    ns.sort(function(a,b){return b.t-a.t;});
+    kop.textContent=f?f.name:'Notities';sub.textContent=ns.length+(ns.length===1?' notitie':' notities');
+    var o='<div class="wrap">';
+    o+='<div class="chips"><button class="chip'+(aktief?'':' on')+'" type="button" data-m="">'+I.note.replace('<svg','<svg style="width:16px;height:16px"')+'Alle notities</button>'+s.folders.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).map(function(m){return '<button class="chip'+(m.id===aktief?' on':'')+'" type="button" data-m="'+m.id+'">'+I.folder+E(m.name)+'</button>';}).join('')+'<button class="chip" type="button" data-nm>'+I.plus+'Map</button></div>';
+    if(!ns.length){o+='<div class="leeg"><div class="ib">'+I.note+'</div><b>'+(term?'Niets gevonden':'Nog geen notities')+'</b>'+(term?'Probeer een ander woord.':'Maak een notitie, geef hem een titel zoals De doop, en zet er tekst en Bijbelverzen in. Vanuit elk vers kun je kiezen: Toevoegen aan Notities.')+'</div>';}
+    else{var groepen={},volg=[];ns.forEach(function(n){var g=dagGroep(n.t);if(!groepen[g]){groepen[g]=[];volg.push(g);}groepen[g].push(n);});
+      volg.forEach(function(g){o+='<div class="groep">'+g+'</div><div class="grid">'+groepen[g].map(function(n){return kaart(n,!aktief);}).join('')+'</div>';});}
+    app.innerHTML=o+'</div>';
+    fl.innerHTML='<label class="pil">'+I.search+'<input id="zoek" type="search" placeholder="Zoek" value="'+E(zoekTerm)+'" autocomplete="off"></label><button class="rond" type="button" data-nn aria-label="Nieuwe notitie">'+I.compose+'</button>';
+    var z=document.getElementById('zoek');z.oninput=function(){zoekTerm=z.value;var p=z.selectionStart;overzicht();var z2=document.getElementById('zoek');z2.focus();z2.setSelectionRange(p,p);};
+  }
+  mn.onclick=function(){var h=hash();
+    if(h.k==='n'){var n=N.note(h.id);if(!n)return;acties('Notitie',[{t:'Verplaats naar map',icon:I.folder,fn:function(){kiesMap(n);}},{t:'Verwijder notitie',icon:I.trash,rood:true,fn:function(){bevestig('Notitie verwijderen?','Deze notitie wordt verwijderd. Dit kan niet ongedaan worden gemaakt.','Verwijderen',function(){var fl2=n.folder;N.delNote(n.id);go(fl2?'m='+fl2:'');});}}]);return;}
+    var l=[{t:'Nieuwe map',icon:I.folder,fn:nieuweMap}];
+    if(aktief){var f=N.state().folders.filter(function(x){return x.id===aktief;})[0];l.push({t:'Naam van map wijzigen',icon:I.edit,fn:function(){vraag('Naam van de map',f.name,'Bewaar',function(v){N.renameFolder(aktief,v);});}});l.push({t:'Verwijder map',s:'De notities blijven bewaard',icon:I.trash,rood:true,fn:function(){bevestig('Map verwijderen?','De notities in deze map blijven bewaard bij Alle notities.','Verwijderen',function(){N.delFolder(aktief);go('');});}});}
+    acties('Notities',l);};
+  function nieuweMap(){vraag('Nieuwe map','','Maak map',function(v){var m=N.addFolder(v);go('m='+m.id);});}
+  function kiesMap(n){var l=[{t:'Geen map',icon:I.note,fn:function(){n.folder=null;N.touch(n);}}].concat(N.state().folders.map(function(f){return {t:f.name,icon:I.folder,fn:function(){n.folder=f.id;N.touch(n);toast('Verplaatst naar '+f.name);}};}));acties('Verplaats naar map',l);}
+
+  /* ---------- notitie (één pagina) ---------- */
+  function vbHtml(b){var vs=N.verses(b),txt=vs.map(function(v){return '<sup>'+v.n+'</sup>'+E(v.t)+' ';}).join(''),lang=!b.v1||vs.length>4;
+    return '<div class="vb" contenteditable="false" data-b="'+E(JSON.stringify({code:b.code,ch:b.ch,v1:b.v1||0,v2:b.v2||0,id:b.id||''}))+'"><div class="r"><a href="'+E(N.href(b))+'">'+E(N.label(b))+'</a><button class="mv" type="button" data-vup aria-label="Vers omhoog"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><button class="mv" type="button" data-vdn aria-label="Vers omlaag"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><button class="x" type="button" data-vx aria-label="Vers verwijderen">×</button></div><div class="t'+(lang?' kort':'')+'">'+txt+'</div>'+(lang?'<button class="m" type="button" data-vm>Toon alles</button>':'')+'</div>';}
+  function blokHtml(b){return b.t==='verse'?vbHtml(b):'<div>'+(b.text?E(b.text):'<br>')+'</div>';}
+  function lees(){var body=document.getElementById('body'),out=[];if(!body)return out;
+    [].slice.call(body.childNodes).forEach(function(c){
+      if(c.nodeType===1&&c.classList.contains('vb')){try{var d=JSON.parse(c.getAttribute('data-b'));out.push({t:'verse',id:d.id||('b'+N.uid()),code:d.code,ch:d.ch,v1:d.v1,v2:d.v2});}catch(e){}}
+      else{var t=c.nodeType===3?c.textContent:(c.innerText||'');t=t.replace(/\n$/,'');out.push({t:'text',id:'b'+N.uid(),text:t});}});
+    while(out.length&&out[out.length-1].t==='text'&&!out[out.length-1].text.trim())out.pop();return out;}
+  function isVb(n){return !!(n&&n.nodeType===1&&n.classList.contains('vb'));}
+  function regelsOk(body){
+    if(!body)return;var mk=function(){var d=document.createElement('div');d.innerHTML='<br>';return d;};
+    if(isVb(body.firstElementChild))body.insertBefore(mk(),body.firstElementChild);
+    if(isVb(body.lastElementChild))body.appendChild(mk());
+    var k=[].slice.call(body.children);
+    for(var i=0;i<k.length-1;i++){if(isVb(k[i])&&isVb(k[i+1]))body.insertBefore(mk(),k[i+1]);}
+    var leeg=function(n){return n&&n.nodeType===1&&!isVb(n)&&!(n.textContent||'').trim();};
+    [].slice.call(body.children).forEach(function(n,j,all){if(j>0&&leeg(n)&&leeg(all[j-1]))body.removeChild(n);});
+  }
+  function verplaatsVb(cv,omhoog){
+    var body=cv&&cv.parentNode;if(!body)return;
+    if(omhoog){var vor=cv.previousElementSibling;while(vor&&!isVb(vor))vor=vor.previousElementSibling;if(!vor)return;body.insertBefore(cv,vor);}
+    else{var na=cv.nextElementSibling;while(na&&!isVb(na))na=na.nextElementSibling;if(!na)return;body.insertBefore(cv,na.nextSibling);}
+    regelsOk(body);bewaar();
+  }
+  var sbT=null;
+  function bewaar(){var n=N.note(editId);if(!n)return;regelsOk(document.getElementById('body'));n.blocks=lees();N.touch(n);if(n.shareId){clearTimeout(sbT);sbT=setTimeout(function(){delenSla(n);},800);}}
+  function notitie(id){
+    var n=N.note(id);if(!n){go('');return;}
+    document.body.classList.add('ed');bk.innerHTML=I.back;bk.setAttribute('href','#');bk.onclick=function(e){e.preventDefault();location.href='/notities/';};mn.innerHTML=I.more;mn.className='tb';
+    kop.textContent=n.title||'Nieuwe notitie';sub.textContent='';
+    var LIJN='<div><br></div>',dl=[];n.blocks.forEach(function(b,i){var pv=i>0?n.blocks[i-1]:null;if(b.t==='verse'&&(!pv||pv.t==='verse'))dl.push(LIJN);dl.push(blokHtml(b));});if(n.blocks.length&&n.blocks[n.blocks.length-1].t==='verse')dl.push(LIJN);var inh=n.blocks.length?dl.join(''):LIJN;
+    app.innerHTML='<div class="pg"><input class="titel" id="titel" placeholder="Titel" value="'+E(n.title)+'" autocomplete="off"><p class="meta">'+E(datum(n.t))+'</p><div class="body" id="body" contenteditable="true" spellcheck="true">'+inh+'</div></div>';
+    fl.innerHTML='<div class="pil vers"><button type="button" data-addvers>'+I.verse+'Vers toevoegen</button></div>';
+    lastIdx=-1;
+  }
+  function plaatsIdx(){var body=document.getElementById('body');if(!body)return;var s=getSelection();if(!s.rangeCount)return;var nd=s.anchorNode;if(!body.contains(nd))return;while(nd&&nd.parentNode!==body)nd=nd.parentNode;if(nd)lastIdx=[].indexOf.call(body.childNodes,nd);}
+  document.addEventListener('selectionchange',plaatsIdx);
+  /* Stap terug / vooruit (Ctrl/Cmd+Z en Ctrl/Cmd+Shift+Z of Ctrl+Y) in de notitie-editor */
+  var hBody=null,hHist=[],hFut=[],hLast=null,hT=null;
+  function hSnap(){var b=document.getElementById('body');return b?b.innerHTML:null;}
+  var hKey=null;
+  function hInit(){var b=document.getElementById('body');var id=(location.hash.match(/n=([^&]+)/)||[])[1]||null;if(id!==hKey){hKey=id;hHist=[];hFut=[];hLast=b?b.innerHTML:null;}hBody=b;}
+  function hRemember(){hInit();var h=hSnap();if(h==null||h===hLast)return;hHist.push(hLast);if(hHist.length>200)hHist.shift();hLast=h;hFut=[];}
+  function hSet(h){var b=document.getElementById('body');if(!b)return;b.innerHTML=h;hLast=h;var r=document.createRange();r.selectNodeContents(b);r.collapse(false);var s=getSelection();s.removeAllRanges();s.addRange(r);bewaar();}
+  new MutationObserver(function(){clearTimeout(hT);hT=setTimeout(hRemember,350);}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
+    var body=document.getElementById('body');if(!body)return;
+    if(!body.contains(document.activeElement)&&document.activeElement!==body)return;
+    hInit();
+    if(k==='z'&&!e.shiftKey){e.preventDefault();hUndo();}
+    else if((k==='z'&&e.shiftKey)||k==='y'){e.preventDefault();hRedo();}
+  },true);
+  /* Knoppen in de bovenbalk: ongedaan maken, opnieuw en delen */
+  var SV=function(d){return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';};
+  function hUndo(){hInit();clearTimeout(hT);hRemember();if(!hHist.length)return;hFut.push(hLast);hSet(hHist.pop());}
+  function hRedo(){hInit();clearTimeout(hT);hRemember();if(!hFut.length)return;hHist.push(hLast);hSet(hFut.pop());}
+  var udB=document.getElementById('ud'),rdB=document.getElementById('rd'),shB=document.getElementById('sh');
+  if(udB){udB.innerHTML=SV('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>');udB.onclick=hUndo;}
+  if(rdB){rdB.innerHTML=SV('<path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>');rdB.onclick=hRedo;}
+  if(shB){shB.innerHTML=SV('<path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M8 11H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-2"/>');
+    shB.onclick=function(){openDelen();};}
+  var SBU='https://vodswfyhlwvhhkqewtap.supabase.co',SBK='sb_publishable_TWZO4LBJZCVPuXG9pAknyA_7gxtFNfu';
+  function sbSessie(){try{var raw=localStorage.getItem('bible-auth-v1')||localStorage.getItem('sb-vodswfyhlwvhhkqewtap-auth-token');var j=raw?JSON.parse(raw):null;return j&&j.access_token&&j.user?j:null;}catch(e){return null;}}
+  function sbHdr(tok){return {apikey:SBK,Authorization:'Bearer '+(tok||SBK),'Content-Type':'application/json'};}
+  function delenRand(){var a='abcdefghijklmnopqrstuvwxyz0123456789',r='';for(var i=0;i<18;i++)r+=a[Math.floor(Math.random()*a.length)];return r;}
+  function delenSla(n,rol){var ss=sbSessie();if(!ss||!n.shareId)return Promise.resolve(false);
+    var body={id:n.shareId,owner_id:ss.user.id,title:n.title||'',blocks:n.blocks||[],updated_at:new Date().toISOString()};
+    if(rol)body.role=rol;
+    return fetch(SBU+'/rest/v1/shared_notes?on_conflict=id',{method:'POST',headers:Object.assign({Prefer:'resolution=merge-duplicates,return=minimal'},sbHdr(ss.access_token)),body:JSON.stringify(body)})
+      .then(function(r){if(r.ok)n.remoteT=Date.now();return r.ok;}).catch(function(){return false;});}
+  function pullRemote(n){if(!n||!n.shareId)return Promise.resolve();
+    return fetch(SBU+'/rest/v1/rpc/get_shared_note',{method:'POST',headers:{apikey:SBK,Authorization:'Bearer '+SBK,'Content-Type':'application/json'},body:JSON.stringify({p_id:n.shareId})})
+      .then(function(r){return r.ok?r.json():[];}).then(function(rows){
+        if(!rows||!rows.length)return;var row=rows[0];var t=Date.parse(row.updated_at)||0;
+        if(t>(n.remoteT||0)+1000){n.title=row.title||n.title;n.blocks=row.blocks||n.blocks;n.remoteT=t;N.touch(n);}
+        if(row.role)n.shareRole=row.role;
+      }).catch(function(){});}
+  function openDelen(){
+    if(true){var l=location.href.split('#')[0]+'#s='+SID;if(navigator.clipboard)navigator.clipboard.writeText(l).then(function(){N.toast('Link gekopieerd');});return;}
+    var n=N.note(editId);if(!n)return;
+    if(!sbSessie()){N.toast('Log in om te delen');return;}
+    if(!n.shareId){n.shareId=delenRand();N.touch(n);}
+    n.blocks=lees();N.touch(n);
+    delenSla(n,n.shareRole||'read').then(function(ok){
+      if(!ok){N.toast('Delen lukt niet, probeer later');return;}
+      var link=location.origin+'/notities/gedeeld/#s='+n.shareId;
+      var bg=document.createElement('div');bg.className='dl-bg';
+      bg.innerHTML='<div class="dl-sh"><div class="dl-h"><b>Deel notitie</b><button class="dl-x" type="button" aria-label="Sluiten">×</button></div>'+
+        '<div class="dl-r"><span>Werk samen</span><input type="checkbox" id="dl-ed" '+(n.shareRole==='edit'?'checked':'')+'></div>'+
+        '<p class="dl-t">'+(n.shareRole==='edit'?'Wie de link heeft en is ingelogd, kan bewerken. Wie niet is ingelogd, kan alleen bekijken.':'Wie de link heeft, kan alleen bekijken (preview). Niets kan worden bewerkt of gedeeld.')+'</p>'+
+        '<input class="dl-l" readonly value="'+link+'"><button class="dl-c" type="button">Kopieer link</button></div>';
+      document.body.appendChild(bg);
+      function sluit(){bg.remove();}
+      bg.addEventListener('click',function(e){if(e.target===bg||e.target.closest('.dl-x'))sluit();
+        if(e.target.closest('.dl-c')&&navigator.clipboard){navigator.clipboard.writeText(link).then(function(){N.toast('Link gekopieerd');});}});
+      bg.querySelector('#dl-ed').addEventListener('change',function(e){n.shareRole=e.target.checked?'edit':'read';delenSla(n,n.shareRole).then(function(){sluit();openDelen();});});
+    });
+  }
+  /* Backspace op een lege regel onder een vers-kaart: verwijder die lege regel, niet de kaart erboven */
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Backspace')return;
+    var body=document.getElementById('body');if(!body)return;
+    var s=getSelection();if(!s.rangeCount||!s.isCollapsed)return;
+    var nd=s.anchorNode;if(!nd||!body.contains(nd))return;
+    var line=nd.nodeType===1?nd:nd.parentNode;while(line&&line.parentNode!==body)line=line.parentNode;
+    if(!line||line.classList.contains('vb'))return;
+    if((line.textContent||'').length||line.querySelector('img'))return;
+    var prev=line.previousElementSibling;if(!prev||!prev.classList.contains('vb'))return;
+    e.preventDefault();
+    var next=line.nextElementSibling;
+    if(next&&next.classList.contains('vb'))return;
+    body.removeChild(line);
+    var r=document.createRange();r.setStartAfter(prev);r.collapse(true);s.removeAllRanges();s.addRange(r);
+    body.dispatchEvent(new Event('input',{bubbles:true}));
+  },true);
+
+  /* vers zoeken en invoegen */
+  function voegIn(ref){
+    var body=document.getElementById('body');if(!body)return;
+    var el=document.createElement('div');el.innerHTML=vbHtml({code:ref.code,ch:ref.ch,v1:ref.v1,v2:ref.v2,id:'b'+N.uid()});var vb=el.firstChild;
+    var kids=body.childNodes,idx=lastIdx>=0&&lastIdx<kids.length?lastIdx:kids.length-1,ref0=kids[idx];
+    var leeg=ref0&&ref0.nodeType===1&&!ref0.classList.contains('vb')&&!(ref0.innerText||'').trim();
+    if(ref0){if(leeg)body.replaceChild(vb,ref0);else body.insertBefore(vb,ref0.nextSibling);}else body.appendChild(vb);
+    var na=document.createElement('div');na.innerHTML='<br>';body.insertBefore(na,vb.nextSibling);
+    bewaar();toast('Toegevoegd: '+N.label(ref));
+  }
+  function zoekScherm(){
+    var s=scherm('<div class="h"><b>Vers toevoegen</b><button class="x" type="button" data-x aria-label="Sluiten">×</button></div><input class="in" id="zq" placeholder="Johannes 3:16, John 3 of een woord uit de tekst" autocomplete="off"><div class="hint">Typ een boek en hoofdstuk (Nederlands of Engels), of een woord uit de tekst.</div><div class="res" id="zres"></div>',function(e,sluit,bg){
+      var x;if((x=e.target.closest('[data-add]'))){var p=x.getAttribute('data-add').split('.');sluit();voegIn({code:p[0],ch:+p[1],v1:+p[2],v2:+p[3]});return;}
+      if((x=e.target.closest('[data-boek]'))){var i=bg.querySelector('#zq');i.value=x.getAttribute('data-boek');res(bg);i.focus();}});
+    var q=s.bg.querySelector('#zq');q.focus();q.oninput=function(){res(s.bg);};
+  }
+  function res(bg){var q=bg.querySelector('#zq').value.trim(),box=bg.querySelector('#zres');if(!q){box.innerHTML='';return;}
+    N.data().then(function(){var h='',ref=N.parse(q);
+      if(ref){if(ref.v1)h+='<button class="rs" type="button" data-add="'+ref.code+'.'+ref.ch+'.'+ref.v1+'.'+ref.v2+'"><b>'+E(N.label(ref))+'</b><span>'+E(N.verses(ref).map(function(v){return v.t;}).join(' ').slice(0,160))+'</span></button>';
+        var hc={code:ref.code,ch:ref.ch,v1:0,v2:0};h+='<button class="rs" type="button" data-add="'+ref.code+'.'+ref.ch+'.0.0"><b>'+E(N.label(hc))+' (hele hoofdstuk)</b></button>';
+        var c=N.bookByCode(ref.code).chapters[ref.ch-1].v.length;h+='<div class="hint">Of kies een vers uit '+E(N.label(hc))+':</div><div class="gr">'+Array.apply(null,Array(c)).map(function(_,i){return '<button type="button" data-add="'+ref.code+'.'+ref.ch+'.'+(i+1)+'.'+(i+1)+'">'+(i+1)+'</button>';}).join('')+'</div>';}
+      else{var bs=N.booksFor(q);
+        if(bs.length&&!/\d/.test(q)){h+='<div class="cc">'+bs.slice(0,8).map(function(b){return '<button type="button" data-boek="'+E(b.name)+'">'+E(b.name)+'</button>';}).join('')+'</div>';
+          var b0=bs.filter(function(b){return b.name.toLowerCase()===q.toLowerCase();})[0]||(bs.length===1?bs[0]:null);
+          if(b0)h+='<div class="hint">Kies een hoofdstuk in '+E(b0.name)+':</div><div class="gr">'+b0.chapters.map(function(_,i){return '<button type="button" data-boek="'+E(b0.name)+' '+(i+1)+'">'+(i+1)+'</button>';}).join('')+'</div>';}
+        var rs=N.search(q,12);if(rs.length)h+=rs.map(function(r){return '<button class="rs" type="button" data-add="'+r.code+'.'+r.ch+'.'+r.v1+'.'+r.v2+'"><b>'+E(N.label(r))+'</b><span>'+E(N.verses(r)[0].t.slice(0,150))+'</span></button>';}).join('');
+        else if(!bs.length)h+='<div class="hint">Niets gevonden.</div>';}
+      box.innerHTML=h;});}
+
+  /* ---------- gebeurtenissen ---------- */
+  function draw(){
+    if(!SID){editId=null;app.innerHTML='<div class="pg"><p class="meta">Open deze pagina via de link die je kreeg.</p></div>';kop.textContent='Gedeelde notitie';return;}
+    if(SN){editId=SN.id;notitie(SN.id);return;}
+    fetch('https://vodswfyhlwvhhkqewtap.supabase.co/rest/v1/rpc/get_shared_note',{method:'POST',headers:SBH(null),body:JSON.stringify({p_id:SID})})
+      .then(function(r){return r.ok?r.json():[];})
+      .then(function(rows){
+        if(!rows||!rows.length){app.innerHTML='<div class="pg"><p class="meta">Deze link werkt niet (meer).</p></div>';kop.textContent='Niet gevonden';return null;}
+        var row=rows[0];var ssG=sbSessieG();
+        SMODE=(row.role==='edit'&&ssG)?'edit':'read';
+        SSS=ssG;
+        SN={id:SID,title:row.title||'',blocks:row.blocks||[],folder:null,shared:true};
+        editId=SID;
+        return N.data().then(function(){notitie(SID);
+          var b=document.getElementById('body');var mt=document.querySelector('.meta');
+          if(SMODE==='read'){b.setAttribute('contenteditable','false');document.body.classList.add('ro');
+            var ti=document.getElementById('titel');if(ti)ti.setAttribute('readonly','readonly');
+            if(mt)mt.textContent=(row.role==='edit')?'Log in om deze notitie te bewerken. Je kunt hem nu alleen bekijken.':'Alleen lezen';}
+          else{if(mt)mt.textContent='Je kunt bewerken. Wijzigingen worden automatisch opgeslagen.';}
+        });
+      }).catch(function(){app.innerHTML='<div class="pg"><p class="meta">Laden lukt niet. Probeer het later opnieuw.</p></div>';});
+  }
+  document.addEventListener('input',function(e){var t=e.target;
+    if(t.id==='titel'){var n=N.note(editId);if(n){n.title=t.value;N.touch(n);kop.textContent=t.value||'Nieuwe notitie';}return;}
+    if(t.id==='body'){eindRegel();bewaar();}});
+  function eindRegel(){var body=document.getElementById('body');if(!body)return null;var l=body.lastElementChild;if(!l||l.classList.contains('vb')){l=document.createElement('div');l.innerHTML='<br>';body.appendChild(l);}return l;}
+  function focusEind(){var l=eindRegel();if(!l)return;var body=document.getElementById('body');body.focus();var r=document.createRange();r.selectNodeContents(l);r.collapse(false);var sel=getSelection();sel.removeAllRanges();sel.addRange(r);}
+  document.addEventListener('click',function(e){var body=document.getElementById('body'),pg=document.querySelector('.pg');if(!body||!pg)return;if(e.target===body||e.target===pg){focusEind();}});
+  document.addEventListener('paste',function(e){var b=document.getElementById('body');if(!b||!b.contains(e.target))return;e.preventDefault();var t=(e.clipboardData||window.clipboardData).getData('text/plain');document.execCommand('insertText',false,t);});
+  document.addEventListener('click',function(e){var t=e.target,c=function(s){return t.closest(s);},x;
+    if((x=c('[data-n]'))){go('n='+x.getAttribute('data-n'));return;}
+    if(c('[data-nm]')){nieuweMap();return;}
+    if(c('[data-m]')!==null&&(x=c('[data-m]'))){go(x.getAttribute('data-m')?'m='+x.getAttribute('data-m'):'');return;}
+    if(c('[data-nn]')){var nw=N.addNote('',aktief||null);go('n='+nw.id);setTimeout(function(){var ti=document.getElementById('titel');if(ti)ti.focus();},350);return;}
+    if(c('[data-addvers]')){zoekScherm();return;}
+    if(c('[data-vup]')||c('[data-vdn]')){verplaatsVb(c('.vb'),!!c('[data-vup]'));return;}
+    if(c('[data-vx]')){var vb=c('.vb');vb.remove();bewaar();return;}
+    if((x=c('[data-vm]'))){var tx=x.parentNode.querySelector('.t'),op=tx.classList.toggle('kort');x.textContent=op?'Toon alles':'Minder tonen';return;}
+    if((x=c('.vb'))&&!c('button')){var lk=x.querySelector('a');if(lk){e.preventDefault();location.href=lk.getAttribute('href');return;}}
+  });
+  N.onChange(function(){var a=document.activeElement;if(a&&(a.tagName==='INPUT'||a.id==='body'))return;if(document.querySelector('.bg'))return;draw();});
+  N.pull().then(function(ok){if(ok){var a=document.activeElement;if(!(a&&(a.tagName==='INPUT'||a.id==='body'))&&!document.querySelector('.bg'))draw();}});
+  draw();
+})();
+</script>
+</body>
+</html>

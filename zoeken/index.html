@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<script src="/onk-id.js?v=1"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zoeken in de Bijbel | De Samenkomst</title>
+<meta name="description" content="Zoek in de hele Bijbel op woord, verwijzing of onderwerp. Gratis, in de Statenvertaling, HSV, NBG 1951 en King James." />
+<meta name="robots" content="noindex">
+<style>
+:root{--ink:#1d2b33;--muted:#6b7a83;--line:#e3e8eb;--paper:#f4f6f7;--accent:#3c5e70;--card:#ffffff;--hl:#fde68a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+header{background:var(--accent);position:sticky;top:0;z-index:5}
+.top{max-width:1200px;margin:0 auto;padding:14px 24px 14px 12px;display:flex;align-items:center;gap:18px}
+.logo{display:block;flex:none;margin-left:4px}
+.logo img{height:28px;width:auto;display:block}
+form.zoek{flex:1;display:flex;align-items:center;gap:10px;height:46px;background:#fff;border-radius:999px;padding:0 18px;border:1px solid transparent}
+form.zoek:focus-within{border-color:transparent;box-shadow:none}
+form.zoek input{flex:1;border:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);outline:none;min-width:0}
+form.zoek button{border:0;background:none;padding:6px;cursor:pointer;color:var(--ink);display:flex;outline:none;border-radius:999px}
+form.zoek button:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+form.zoek input:focus{outline:none}
+.ver{height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.45);display:flex;align-items:center;font-size:14px;font-weight:600;color:#fff;background:transparent;flex:none}
+button.ver{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.vwrap{position:relative;flex:none}
+.vmenu{position:absolute;right:0;top:calc(100% + 10px);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px;min-width:230px;z-index:20}
+.vmenu[hidden]{display:none}
+.vmenu button{display:flex;justify-content:space-between;align-items:center;gap:16px;width:100%;border:0;background:none;padding:12px 14px;border-radius:12px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;text-align:left}
+.vmenu button.on{background:#eef2f4;font-weight:700}
+.vmenu .k{color:#6b7a83;font-weight:600;font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.tabs{display:flex;gap:28px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs span{padding:10px 0;font-size:15px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--accent);font-weight:600;border-bottom-color:var(--accent)}
+.samenvat{font-size:15px;color:var(--ink);margin:0 0 22px}
+.samenvat b{font-weight:700}
+.kop{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin:0 0 14px}
+.top-res{background:#fff;border-radius:16px;padding:22px 24px;margin-bottom:36px}
+.top-res .ref{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.top-res .tekst{font-size:18px;line-height:1.6}
+a.top-res{display:block;color:inherit;text-decoration:none;border:1px solid transparent;transition:border-color .15s,box-shadow .15s}
+a.top-res:hover{border-color:#d5dde1;box-shadow:0 2px 10px rgba(29,43,51,.08)}
+a.top-res:hover .ref{color:var(--accent)}
+a.top-res:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lijst{display:flex;flex-direction:column;gap:28px}
+.rij{display:grid;grid-template-columns:170px minmax(0,1fr);gap:24px;padding:0 4px;text-decoration:none;color:inherit;border-radius:12px}
+a.rij:hover{background:#fff}
+a.ref{text-decoration:none;color:var(--accent)}
+a.ref:hover{text-decoration:underline}
+.top-res a.ref{display:block;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;text-decoration:none}
+.top-res a.ref:hover{color:var(--accent)}
+.rij .ref{font-size:15px;font-weight:700;color:var(--accent);padding-top:2px}
+.rij .tekst{font-size:16px;line-height:1.65}
+.tekst strong,.top-res strong{background:var(--hl);font-weight:700;border-radius:3px;padding:0 1px}
+.meer{display:block;margin:18px auto 0;height:44px;padding:0 22px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.meer[hidden]{display:none}
+.leeg{padding:30px 4px;color:var(--muted);font-size:16px}
+aside:empty{display:none}
+/* zonder filters (boekenkiezer) gebruikt de pagina de hele breedte */
+.wrap:has(aside:empty){max-width:none;grid-template-columns:minmax(0,1fr)}
+aside{position:sticky;top:96px;background:#fff;border-radius:16px;padding:18px 14px;max-height:calc(100vh - 120px);overflow-y:auto}
+aside h3{font-size:15px;margin:2px 8px 12px;font-weight:700}
+.fb{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:none;padding:8px 10px;border-radius:10px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;text-align:left}
+.fb:hover{background:var(--paper)}
+.fb.on{background:#e7ecef;font-weight:700}
+.fb .n{color:var(--muted);font-variant-numeric:tabular-nums}
+.fgroep{margin-top:14px}
+.fgroep>.ft{font-size:13px;font-weight:700;color:var(--accent);padding:6px 10px}
+.fb.boek{padding-left:14px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:24px}aside{position:static;max-height:none}.rij{grid-template-columns:1fr;gap:6px}}
+
+.boeken{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 30px}
+.boek{display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;font-size:15px;font-weight:600}
+.boek:hover{background:#e7ecef}
+.kop2{margin-top:26px}
+/* boek / hoofdstuk / vers kiezer */
+.pk{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);background:#fff;border-radius:22px;box-shadow:0 8px 30px rgba(29,43,51,.08);overflow:hidden;min-height:420px;max-height:78vh;margin-bottom:24px}
+.pk-l{display:grid;grid-template-columns:1fr 1fr;gap:0 8px;padding:20px 12px 20px 24px;overflow-y:auto;border-right:1px solid #eef1f3}
+.pk-k{margin:2px 0 8px 10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pk-b{display:block;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:10px;font:inherit;font-size:15.5px;color:var(--ink);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-b:hover{background:#f4f6f7}.pk-b.on{font-weight:700;background:#eef2f4;color:var(--accent)}
+.pk-r,.pk-inline{padding:22px 24px;overflow-y:auto}
+.pk-inline{background:#fff;border-radius:18px;box-shadow:0 6px 20px rgba(29,43,51,.07);margin:0 0 26px}
+.pk-h{margin:0 0 14px;font-size:22px;font-weight:800;color:var(--ink)}
+.pk-leeg{margin:30px 0;color:var(--muted);font-size:15px}
+.pk-cl{display:flex;flex-direction:column;gap:6px}
+.pk-c{display:flex;align-items:center;gap:16px;width:100%;text-align:left;border:0;background:none;padding:6px 8px;border-radius:14px;font:inherit;cursor:pointer;color:var(--accent);font-size:16px}
+.pk-c:hover{background:#f4f6f7}
+.pk-c .nr{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;border-radius:12px;background:#eef2f4;color:var(--ink);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.pk-back{display:inline-flex;align-items:center;gap:10px;border:0;background:none;padding:4px 0;font:inherit;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;margin-bottom:14px}
+.pk-pijl{font-size:22px;line-height:1}
+.pk-hele{display:block;padding:12px 10px;border-radius:12px;font-weight:700;color:var(--ink);text-decoration:none;margin:4px 0 16px}.pk-hele:hover{background:#f4f6f7}
+.pk-lab{margin:0 0 8px 6px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pk-vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:4px}
+.pk-vg a{display:flex;align-items:center;justify-content:center;height:46px;border-radius:12px;font-weight:700;color:var(--ink);text-decoration:none;font-variant-numeric:tabular-nums}.pk-vg a:hover{background:#eef2f4;color:var(--accent)}
+button.ond{border:0;background:none;width:100%;font:inherit;font-size:16px;text-align:left;cursor:pointer}
+.ond.chr .cn{display:inline-block;min-width:38px;color:var(--ink);font-variant-numeric:tabular-nums}
+.ond:not(.chr) .cn{font-variant-numeric:tabular-nums}
+.ond:not(.chr) .nl:has(>.cn){font-weight:400}
+.ond:not(.chr) .nl>.cn{font-weight:800}
+.bkview .versrij{margin-top:6px}
+.pk-back0{display:inline-flex}
+@media (max-width:760px){
+  .pk{display:block;max-height:none;overflow:visible;min-height:0}
+  .pk-l{border-right:0;max-height:none;overflow:visible;padding:16px 12px}
+  .pk.pk-open .pk-l{display:none}
+  .pk:not(.pk-open) .pk-r{display:none}
+  .pk-r,.pk-inline{overflow:visible;max-height:none;padding:18px 16px}
+  .pk-back0{display:inline-flex}
+  .pk-b{padding:12px 10px;font-size:16px}
+  .pk-vg{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}
+}
+button.boek{border:0;cursor:pointer;font-family:inherit}.boek.on{background:var(--accent);color:#fff}.boek.on:hover{background:var(--accent)}.kop2{margin:22px 0 10px}
+.boekkop{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:28px 0 14px}.boekkop .bn{font-size:20px;font-weight:800;color:var(--ink)}.boekkop .bt{font-size:12.5px;font-weight:700;color:var(--muted);background:#eaeef0;border-radius:999px;padding:5px 12px}
+.kop.met-ico{display:flex;align-items:center;gap:12px;font-size:20px;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:800;margin:0 0 14px}
+.versrij .kop.met-ico{margin:0 0 14px}
+.ico{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ico-groen{background:#e4f4cf;color:#4f8a12}.ico-rood{background:#f9ebe8;color:#a8553f}.ico-blauw{background:#e7eef4;color:#3c5e70}
+.ico-geel{background:#fff1bf;color:#a37a00}.ico-cyaan{background:#d8f0fb;color:#1486b8}.ico-donker{background:#d5dee9;color:#26405c}
+.hoofdstukken{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:10px}
+.hoofdstuk{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid #e6ebee;box-shadow:0 1px 3px rgba(29,43,51,.04);text-decoration:none;color:var(--ink);font-size:15px;transition:box-shadow .15s ease,border-color .15s ease}
+.hoofdstuk:hover{box-shadow:0 4px 14px rgba(29,43,51,.08);border-color:#d5dde1}
+.hoofdstuk .nr{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;padding:0 8px;border-radius:10px;background:#eef2f4;color:var(--accent);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
+.hoofdstuk .tt{line-height:1.35;font-weight:500}
+.fb.boek2{font-size:14px}
+
+[hidden]{display:none!important}
+.versrij{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.versrij .kop{margin:0}
+.sorteer{display:flex;gap:6px}
+.sorteer button{height:34px;padding:0 14px;border-radius:999px;border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.sorteer button.on{background:var(--accent);color:#fff}
+.sorteer button:not(.on):hover{background:#e7ecef}
+.tab{background:none;border:0;padding:10px 0;margin-right:28px;font:inherit;font-size:15px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;cursor:pointer}
+.tab.on{color:var(--accent);font-weight:600;border-bottom-color:var(--accent)}
+.ondlijst{display:flex;flex-direction:column;gap:2px}
+.ond{display:flex;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:12px;text-decoration:none;color:var(--ink);font-size:16px;align-items:baseline}
+.ond .nl{font-weight:600;color:var(--accent)}
+.topond{display:block;text-decoration:none;color:inherit}
+.topond .ref{font-size:18px;font-weight:700;margin-bottom:6px}
+.topond .tekst{font-size:15px;color:var(--muted)}
+.ond:hover{background:#fff}
+.ond .n{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.embed header{display:none}
+.embed form.zoek{display:none}
+form.zoek{position:relative}
+.zp{position:absolute;left:0;right:0;top:calc(100% + 8px);background:#fff;border-radius:22px;padding:14px;box-shadow:0 12px 40px rgba(29,43,51,.14);z-index:60;display:flex;flex-direction:column;text-align:left}
+.zp[hidden]{display:none}
+.zp-k{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 6px;font-size:15px;font-weight:700;color:var(--ink)}
+.zp-rij{margin-top:10px}
+.zp .zp-r{display:flex;align-items:center;gap:14px;width:100%;padding:8px;border:0;background:none;border-radius:10px;font:inherit;font-size:16px;color:var(--ink);text-align:left;cursor:pointer}
+.zp .zp-r:hover{background:#f4f2f3}
+.zp .zp-i{width:36px;height:36px;border-radius:999px;background:#f4f2f3;display:flex;align-items:center;justify-content:center;flex:none;color:var(--ink)}
+.zp .zp-w{border:0;background:#eef1f3;border-radius:999px;padding:7px 16px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+.zp .zp-w:hover{background:#e2e7ea}
+.embed .wrap{padding:6px 4px 0}
+.embed body,.embed html{background:transparent}
+input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:14px;height:14px;cursor:pointer;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7a83' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center/14px no-repeat}
+@media (max-width:640px){form.zoek{min-width:0;flex:1 1 0}.top{box-sizing:border-box;min-height:calc(76.5px + env(safe-area-inset-top,0px));padding:calc(21.25px + env(safe-area-inset-top,0px)) 12px 9.25px;gap:10px;align-items:flex-start}.logo{display:none}.ver{padding:0 12px;font-size:13px}.wrap{padding:16px;gap:20px;min-width:0}.wrap>*{min-width:0}.top-res{padding:18px}.hoofdstukken{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="/onk-tabs.css?v=1">
+</head>
+<body>
+<header>
+  <div class="top">
+    <a class="logo" href="/"><img src="/img/brand/bijbel-online-logo.webp" alt="Bijbel Online"></a>
+    <form class="zoek" id="zoekform" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7a83" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Zoek in de Bijbel…" autocomplete="off" aria-label="Zoek in de Bijbel">
+      <button type="submit" aria-label="Zoeken"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+    <div class="vwrap"><button type="button" class="ver" id="ver" aria-label="Vertaling kiezen" aria-haspopup="true" aria-expanded="false">SV</button>
+    <div class="vmenu" id="vmenu" hidden>
+      <button type="button" data-v="sv"><span>Statenvertaling</span><span class="k">SV</span></button>
+      <button type="button" data-v="hsv"><span>Herziene Statenvertaling</span><span class="k">HSV</span></button>
+      <button type="button" data-v="nbg51"><span>NBG-vertaling 1951</span><span class="k">NBG</span></button>
+      <button type="button" data-v="kjv"><span>King James Version</span><span class="k">KJV</span></button>
+    </div></div>
+    <script>(function(){var b=document.getElementById('ver'),m=document.getElementById('vmenu'),p=new URLSearchParams(location.search),O=['sv','hsv','nbg51','kjv'],L={sv:'SV',hsv:'HSV',nbg51:'NBG',kjv:'KJV'},EN2=(function(){var l=(p.get('lang')||p.get('locale')||'').toLowerCase();if(l==='en')return true;if(l==='nl')return false;try{return (localStorage.getItem('bible-locale')||'').toLowerCase().indexOf('en')===0;}catch(e){return false;}})(),c=O.indexOf(p.get('v'));if(c<0){var dv='';try{dv=(localStorage.getItem('bible-default-version')||'').toLowerCase();}catch(e){}c=O.indexOf(dv);if(c<0)c=EN2?3:0;}b.textContent=L[O[c]];
+    [].forEach.call(m.querySelectorAll('button'),function(x){if(x.getAttribute('data-v')===O[c])x.className='on';x.onclick=function(){var n=x.getAttribute('data-v');if(n==='sv'&&!EN2)p.delete('v');else p.set('v',n);location.search=p.toString();};});
+    function zet(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');}
+    b.onclick=function(e){e.stopPropagation();zet(m.hidden);};
+    document.addEventListener('click',function(){zet(false);});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')zet(false);});})();</script>
+  </div>
+</header>
+
+<div class="wrap">
+  <main>
+    <div class="tabs"><button type="button" class="tab on" id="tabBijbel">Bijbel</button><button type="button" class="tab" id="tabOnd">Onderwerpen</button></div>
+    <p class="samenvat" id="samenvat">Laden…</p>
+    <div id="boekenBlok"></div>
+    <div id="topBlok"></div>
+    <div id="titelBlok"></div><div class="versrij" id="versRij" hidden><p class="kop met-ico" id="versKop">Verzen</p><div class="sorteer" role="group" aria-label="Sorteren"><button type="button" data-s="rel" class="on">Relevantie</button><button type="button" data-s="az">A→Z</button><button type="button" data-s="za">Z→A</button></div></div>
+    <div class="lijst" id="lijst"></div>
+    <button type="button" class="meer" id="meer" hidden>Meer resultaten</button>
+    <div class="leeg" id="leeg" hidden></div>
+  </main>
+  <aside id="filters" aria-label="Filters"></aside>
+</div>
+
+<script>
+(function(){
+  var PER=25;
+  var EN=(function(){var p=new URLSearchParams(location.search),l=(p.get('lang')||p.get('locale')||'').toLowerCase();if(l==='en')return true;if(l==='nl')return false;try{return (localStorage.getItem('bible-locale')||'').toLowerCase().indexOf('en')===0;}catch(e){return false;}})();
+  function T(nl,en){return EN?en:nl;}
+  var NLNAME=[];
+  function nT(n){return n+' '+(EN?(n===1?'verse':'verses'):(n===1?'tekst':'teksten'));}
+  function ondNm(o){return (EN?o.naam:o.nl).replace(/\\(['"])/g,'$1');}
+  var DATA=null, VERSEN=null, TITELS=null, BOEKSLUG=[];
+  var state={open:-1,openCh:0,bsort:'bijbel',btest:'alle',bch:'alle',q:'',boek:'',getoond:0,res:null,topGetoond:false,sort:'rel',tab:'bijbel',ondMax:200};
+  if(new URLSearchParams(location.search).get('t')==='o')state.tab='onderwerpen';
+  var ONDERWERPEN=null;
+
+  function norm(t){return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[.,;:!?()\[\]"'“”‘’\-–—]/g,' ').replace(/\s+/g,' ').trim().replace(/jez/g,'jes');}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function slug(naam){return norm(naam).replace(/ /g,'-');}
+
+  function laad(){
+    var vp=new URLSearchParams(location.search).get('v');
+    var dvv='';try{dvv=(localStorage.getItem('bible-default-version')||'').toLowerCase();}catch(e){}
+    /* Versie = gekozen in de URL, anders de standaardvertaling van het account, anders SV (NL) of KJV (EN). De taal van de site bepaalt alleen namen en labels. */
+    var toon=(vp==='kjv'||vp==='hsv'||vp==='nbg51'||vp==='sv')?vp:((dvv==='kjv'||dvv==='hsv'||dvv==='nbg51'||dvv==='sv')?dvv:(EN?'kjv':'sv'));
+    return Promise.all([
+      fetch('/data/sv.json').then(function(r){return r.json();}),
+      fetch('/data/chapterTitles'+(EN?'-en':'')+'.json').then(function(r){return r.json();}),
+      fetch('/data/kjv.json').then(function(r){return r.json();}),
+      (toon==='hsv'||toon==='nbg51')?fetch('/data/seo/'+toon+'.json').then(function(r){return r.json();}):Promise.resolve(null)
+    ]).then(function(res){
+      var d=res[0];TITELS=res[1];var kjv=res[2];var extra=res[3];
+      DATA=d;VERSEN=[];
+      VERSEN_TOON=toon;
+      d.forEach(function(b,bi){BOEKSLUG[bi]=slug(b.name);NLNAME[bi]=b.name;if(EN&&kjv[bi]&&kjv[bi].name)b.name=kjv[bi].name;});
+      d.forEach(function(b,bi){
+        b.chapters.forEach(function(c,ci){
+          c.v.forEach(function(t,vi){
+            var n=norm(t);
+            var tk=kjv[bi]&&kjv[bi].chapters[ci]&&kjv[bi].chapters[ci].v[vi]||'';
+            var nk=norm(tk);
+            var tx=extra&&extra[bi]&&extra[bi].chapters[ci]&&extra[bi].chapters[ci].v[vi]||'';
+            var nx=norm(tx);
+            VERSEN.push({bi:bi,ci:ci+1,vi:vi+1,ref:b.name+' '+(ci+1)+':'+(vi+1),tekst:toon==='kjv'?tk:(extra&&tx?tx:t),tok:n?n.split(' '):[],tekstSv:t,tekstKjv:tk,tokKjv:nk?nk.split(' '):[],tokX:nx?nx.split(' '):[]});
+          });
+        });
+      });
+    });
+  }
+
+  function zoek(q){
+    var qn=norm(q); if(!qn)return {treffers:[],per:[],tot:0,w:[],laatstePrefix:false};
+    var w=qn.split(' ');
+    var laatstePrefix=!/\s$/.test(q);
+    var fase=[],rest=[];
+    var re_esc=function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');};
+    function past(toks){
+      var ok=true;
+      for(var i=0;i<w.length&&ok;i++){
+        var wi=w[i], isL=(i===w.length-1)&&laatstePrefix, gev=false;
+        for(var j=0;j<toks.length;j++){
+          if(isL?toks[j].indexOf(wi)===0:toks[j]===wi){gev=true;break;}
+        }
+        if(!gev)ok=false;
+      }
+      if(!ok)return null;
+      var zin=' '+toks.join(' ')+' ', fraseOk;
+      if(laatstePrefix){
+        var pre=w.slice(0,-1).map(re_esc).join(' ');
+        var re=new RegExp(' '+(pre?pre+' ':'')+re_esc(w[w.length-1])+'[^ ]* ');
+        fraseOk=re.test(zin);
+      }else{
+        fraseOk=zin.indexOf(' '+qn+' ')>=0;
+      }
+      return {frase:fraseOk};
+    }
+    VERSEN.forEach(function(v){
+      var a=past(v.tok)||(v.tokX&&v.tokX.length?past(v.tokX):false), b=a?null:past(v.tokKjv||[]);
+      var m=a||b;
+      if(!m)return;
+      (m.frase?fase:rest).push(v);
+    });
+    var treffers=fase.concat(rest);
+    var per=[];for(var k=0;k<DATA.length;k++)per[k]=0;
+    treffers.forEach(function(v){per[v.bi]++;});
+    return {treffers:treffers,per:per,tot:treffers.length,w:w,laatstePrefix:laatstePrefix};
+  }
+
+  var EN_ALIAS={GEN:['genesis','gen','ge'],EXO:['exodus','exod','ex'],LEV:['leviticus','lev'],NUM:['numbers','num','nu'],DEU:['deuteronomy','deut','dt'],JOS:['joshua','josh'],JDG:['judges','judg'],RUT:['ruth'],'1SA':['1 samuel','1 sam','i samuel','first samuel'],'2SA':['2 samuel','2 sam','ii samuel','second samuel'],'1KI':['1 kings','1 kgs','i kings','first kings'],'2KI':['2 kings','2 kgs','ii kings','second kings'],'1CH':['1 chronicles','1 chron','i chronicles','first chronicles'],'2CH':['2 chronicles','2 chron','ii chronicles','second chronicles'],EZR:['ezra'],NEH:['nehemiah','neh'],EST:['esther','est'],JOB:['job'],PSA:['psalms','psalm','ps','psa'],PRO:['proverbs','prov','pr'],ECC:['ecclesiastes','eccl','eccles'],SNG:['song of solomon','song of songs','song','songs','sos'],ISA:['isaiah','isa'],JER:['jeremiah','jer'],LAM:['lamentations','lam'],EZK:['ezekiel','ezek'],DAN:['daniel','dan'],HOS:['hosea','hos'],JOL:['joel'],AMO:['amos'],OBA:['obadiah','obad'],JON:['jonah'],MIC:['micah','mic'],NAM:['nahum','nah'],HAB:['habakkuk','hab'],ZEP:['zephaniah','zeph'],HAG:['haggai','hag'],ZEC:['zechariah','zech'],MAL:['malachi','mal'],MAT:['matthew','matt','mt'],MRK:['mark','mk'],LUK:['luke','lk'],JHN:['john','jn'],ACT:['acts','act'],ROM:['romans','rom'],'1CO':['1 corinthians','1 cor','i corinthians','first corinthians'],'2CO':['2 corinthians','2 cor','ii corinthians','second corinthians'],GAL:['galatians','gal'],EPH:['ephesians','eph'],PHP:['philippians','phil'],COL:['colossians','col'],'1TH':['1 thessalonians','1 thess','i thessalonians','first thessalonians'],'2TH':['2 thessalonians','2 thess','ii thessalonians','second thessalonians'],'1TI':['1 timothy','1 tim','i timothy','first timothy'],'2TI':['2 timothy','2 tim','ii timothy','second timothy'],TIT:['titus'],PHM:['philemon'],HEB:['hebrews','heb'],JAS:['james','jas'],'1PE':['1 peter','1 pet','i peter','first peter'],'2PE':['2 peter','2 pet','ii peter','second peter'],'1JN':['1 john','1 jn','i john','first john'],'2JN':['2 john','2 jn','ii john','second john'],'3JN':['3 john','3 jn','iii john','third john'],JUD:['jude'],REV:['revelation','revelations','rev','apocalypse']};
+  // Alle namen waaronder een boek te vinden is: Nederlands (uit de data) en Engels, ongeacht de taal van de site.
+  function boekNamen(bi){var b=DATA[bi],n=[norm(b.name)];if(NLNAME[bi])n.push(norm(NLNAME[bi]));(EN_ALIAS[b.code]||[]).forEach(function(a){n.push(norm(a));});return n;}
+  function boekIndex(naam){
+    var q=norm(naam); if(!q)return -1;
+    var exact=-1,pref=[];
+    DATA.forEach(function(b,bi){boekNamen(bi).forEach(function(n){if(n===q)exact=bi;else if(q.length>=3&&n.indexOf(q)===0&&pref.indexOf(bi)<0)pref.push(bi);});});
+    if(exact>=0)return exact;
+    return pref.length===1?pref[0]:-1;
+  }
+  // "john 3:16", "Johannes 3 vers 16", "1 cor 13", "ps 23.1" -> {bi,ci,vi}
+  function parseRef(q){
+    var n=norm(q).replace(/\b(vers|verse|vs|v|hoofdstuk|hfst|chapter|ch)\b/g,' ').replace(/\s+/g,' ').trim();
+    var m=/^((?:[123]|i{1,3}) ?[a-z]+(?: [a-z]+)*|[a-z]+(?: [a-z]+)*) (\d+)(?: (\d+))?$/.exec(n);
+    if(!m)return null;
+    var bi=boekIndex(m[1]); if(bi<0)return null;
+    var ci=+m[2],vi=m[3]?+m[3]:0,b=DATA[bi];
+    if(ci<1||ci>b.chapters.length)return null;
+    if(vi&&vi>b.chapters[ci-1].v.length)vi=0;
+    return {bi:bi,ci:ci,vi:vi};
+  }
+  function boekenVoor(q){
+    var qn=norm(q); if(!qn)return [];
+    var out=[];
+    DATA.forEach(function(b,bi){
+      if(boekNamen(bi).some(function(n){return n.indexOf(qn)===0;}))out.push(bi);
+    });
+    return out;
+  }
+
+  var VERSEN_TOON='sv';
+  function titelTreffers(q){
+    var qn=norm(q); if(!qn||!TITELS||!DATA)return [];
+    var w=qn.split(' ').filter(function(x){return x.length>1;}); if(!w.length)return [];
+    var out=[];
+    DATA.forEach(function(b,bi){
+      (TITELS[b.code]||[]).forEach(function(t,ci){
+        var toks=norm(t).split(' ');
+        var ok=w.every(function(x,k){var last=k===w.length-1;return toks.some(function(tk){return last?tk.indexOf(x)===0:tk===x;});});
+        if(ok)out.push({bi:bi,ci:ci+1,t:t});
+      });
+    });
+    return out;
+  }
+  function renderTitels(q){
+    var el=document.getElementById('titelBlok'); if(!el)return;
+    var tt=titelTreffers(q).slice(0,12);
+    if(!tt.length){el.innerHTML='';return;}
+    el.innerHTML='<div class="versrij"><p class="kop met-ico"><span class="ico ico-donker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span>'+T('Hoofdstukken','Chapters')+'</p></div><div class="ondlijst">'+
+      tt.map(function(x){return '<a class="ond" href="/'+BOEKSLUG[x.bi]+'/'+x.ci+'/"><span class="nl"><b class="cn">'+x.ci+' '+esc(DATA[x.bi].name)+'</b> \u2013 '+esc(x.t)+'</span><span class="n">&rarr;</span></a>';}).join('')+'</div>';
+  }
+  function vHref(v){return '/'+BOEKSLUG[v.bi]+'/'+v.ci+'/?ref='+DATA[v.bi].code+'.'+v.ci+'.'+v.vi+'&v='+VERSEN_TOON;}
+  function markeer(tekst,w,laatstePrefix){
+    return tekst.replace(/[\p{L}\p{N}]+/gu,function(woord){
+      var n=norm(woord);
+      if(!n)return esc(woord);
+      for(var i=0;i<w.length;i++){
+        var wi=w[i], l=(i===w.length-1)&&laatstePrefix;
+        if(l?n.indexOf(wi)===0:n===wi)return '<strong>'+esc(woord)+'</strong>';
+      }
+      return esc(woord);
+    });
+  }
+
+  /* boek, hoofdstuk, vers: lijst in dezelfde stijl als de onderwerpen */
+  function rechtsHtml(){
+    var bi=state.open;
+    if(bi<0)return '';
+    var b=DATA[bi],sl=BOEKSLUG[bi],ch=state.openCh;
+    if(ch>0&&b.chapters[ch-1]){
+      var n=b.chapters[ch-1].v.length,vg='';
+      for(var v=1;v<=n;v++)vg+='<a href="/'+sl+'/'+ch+'/?ref='+b.code+'.'+ch+'.'+v+'&v='+VERSEN_TOON+'">'+v+'</a>';
+      return '<button type="button" class="pk-back" data-pkback><span class="pk-pijl">&#8249;</span>'+esc(b.name)+'</button><div class="versrij"><p class="kop met-ico">'+ikoon('boek')+esc(b.name)+' '+ch+'</p></div>'+
+        '<div class="ondlijst"><a class="ond" href="/'+sl+'/'+ch+'/"><span class="nl">'+T('Heel hoofdstuk','Whole chapter')+' '+ch+'</span><span class="n">&rarr;</span></a></div><p class="pk-lab">'+T('Vers','Verse')+'</p><div class="pk-vg">'+vg+'</div>';
+    }
+    var titels=(TITELS&&TITELS[b.code])||[];
+    return '<button type="button" class="pk-back" data-pkbooks><span class="pk-pijl">&#8249;</span>'+T('Boeken','Books')+'</button><div class="versrij"><p class="kop met-ico">'+ikoon('boek')+esc(b.name)+'</p></div><div class="ondlijst">'+b.chapters.map(function(c,ci){
+      return '<button type="button" class="ond chr" data-ch="'+(ci+1)+'"><span class="nl"><b class="cn">'+(ci+1)+'</b>'+esc(titels[ci]||'')+'</span><span class="n">'+c.v.length+' '+(EN?(c.v.length===1?'verse':'verses'):(c.v.length===1?'vers':'verzen'))+'</span></button>';
+    }).join('')+'</div>';
+  }
+  function boekKnop(bi){return '<button type="button" class="boek'+(state.open===bi?' on':'')+'" data-bk="'+bi+'" aria-expanded="'+(state.open===bi)+'">'+esc(DATA[bi].name)+'</button>';}
+  function pkKnop(bi){return '<button type="button" class="pk-b'+(state.open===bi?' on':'')+'" data-bk="'+bi+'">'+esc(DATA[bi].name)+'</button>';}
+  function boekRij(i){var n=DATA[i].chapters.length;return '<button type="button" class="ond" data-bk="'+i+'"><span class="nl">'+esc(DATA[i].name)+'</span><span class="n">'+n+' '+(EN?(n===1?'chapter':'chapters'):(n===1?'hoofdstuk':'hoofdstukken'))+'</span></button>';}
+  function boekenHtml(bis){
+    if(state.open>=0&&bis.indexOf(state.open)>=0)return '<div class="bkview">'+rechtsHtml()+'</div>';
+    return '<div class="versrij"><p class="kop met-ico">'+ikoon('boek')+T('Boeken','Books')+'</p></div><div class="ondlijst">'+bis.map(boekRij).join('')+'</div>';
+  }
+  function bladerHtml(){
+    var filt=document.getElementById('filters');
+    var samEl=document.getElementById('samenvat');
+    function nfmt(n){return n.toLocaleString(EN?'en-US':'nl-NL');}
+    if(state.open>=0){
+      var ob=DATA[state.open],oc=state.openCh>0&&ob.chapters[state.openCh-1];
+      var tel1=oc?'<b>'+nfmt(oc.v.length)+'</b> '+T(oc.v.length===1?'vers':'verzen',oc.v.length===1?'verse':'verses'):'<b>'+nfmt(ob.chapters.length)+'</b> '+T(ob.chapters.length===1?'hoofdstuk':'hoofdstukken',ob.chapters.length===1?'chapter':'chapters');
+      if(samEl)samEl.innerHTML='';
+      filt.innerHTML='';return '<p class="samenvat">'+tel1+'</p><div class="bkview">'+rechtsHtml()+'</div>';
+    }
+    var tt=state.btest||'alle',cc=state.bch||'alle';
+    function pastT(i,t){return t==='alle'||(t==='ot'?i<39:i>=39);}
+    function pastC(i,c){var n=DATA[i].chapters.length;return c==='alle'||(c==='1'&&n===1)||(c==='2-9'&&n>=2&&n<=9)||(c==='10-29'&&n>=10&&n<=29)||(c==='30+'&&n>=30);}
+    var idx=DATA.map(function(b,i){return i;}),lijst=idx.filter(function(i){return pastT(i,tt)&&pastC(i,cc);});
+    if(state.bsort==='az')lijst.sort(function(a,b){return DATA[a].name.localeCompare(DATA[b].name,EN?'en':'nl',{sensitivity:'base'});});
+    else if(state.bsort==='za')lijst.sort(function(a,b){return DATA[b].name.localeCompare(DATA[a].name,EN?'en':'nl',{sensitivity:'base'});});
+    function tel(fnT,fnC){return idx.filter(function(i){return fnT(i)&&fnC(i);}).length;}
+    function knop(g,v,label,aantal,sel){return '<button type="button" class="fb'+(sel===v?' on':'')+'" data-bf="'+g+'" data-bv="'+v+'"><span>'+label+'</span><span class="n">'+aantal+'</span></button>';}
+    var okC=function(i){return pastC(i,cc);},okT=function(i){return pastT(i,tt);};
+    filt.innerHTML='<h3>Filters</h3>'+
+      '<div class="fgroep"><div class="ft">'+T('Testament','Testament')+'</div>'+
+        knop('t','alle',T('Alles','All'),tel(function(){return true;},okC),tt)+knop('t','ot',T('Oude Testament','Old Testament'),tel(function(i){return i<39;},okC),tt)+knop('t','nt',T('Nieuwe Testament','New Testament'),tel(function(i){return i>=39;},okC),tt)+'</div>'+
+      '<div class="fgroep"><div class="ft">'+T('Aantal hoofdstukken','Number of chapters')+'</div>'+
+        knop('c','alle',T('Alles','All'),tel(okT,function(){return true;}),cc)+knop('c','1',T('1 hoofdstuk','1 chapter'),tel(okT,function(i){return pastC(i,'1');}),cc)+knop('c','2-9',T('2 tot 9','2 to 9'),tel(okT,function(i){return pastC(i,'2-9');}),cc)+knop('c','10-29',T('10 tot 29','10 to 29'),tel(okT,function(i){return pastC(i,'10-29');}),cc)+knop('c','30+',T('30 of meer','30 or more'),tel(okT,function(i){return pastC(i,'30+');}),cc)+'</div>';
+    if(samEl)samEl.innerHTML='';
+    var tel0='<p class="samenvat"><b>'+nfmt(lijst.length)+'</b> '+T(lijst.length===1?'bijbelboek':'bijbelboeken',lijst.length===1?'Bible book':'Bible books')+'</p>';
+    var so=state.bsort||'bijbel';
+    function sk(v,l){return '<button type="button" data-bs="'+v+'"'+(so===v?' class="on"':'')+'>'+l+'</button>';}
+    return tel0+'<div class="versrij"><p class="kop met-ico">'+ikoon('boek')+T('Boeken','Books')+'</p><div class="sorteer" role="group">'+sk('bijbel',T('Bijbelvolgorde','Bible order'))+sk('az','A→Z')+sk('za','Z→A')+'</div></div>'+
+      '<div class="ondlijst">'+lijst.map(boekRij).join('')+'</div>';
+  }
+  function toonBoeken(){
+    var bk=document.getElementById('boekenBlok');if(!bk||!DATA)return;
+    var q=state.q||'';
+    if(state.tab!=='bijbel')return;
+    if(!q.trim()){bk.innerHTML=bladerHtml();return;}
+    if(parseRef(q))return;
+    var bis=boekenVoor(q);bk.innerHTML=bis.length?boekenHtml(bis):'';
+  }
+  function naarBoven(){if(window.innerWidth>760)return;var el=document.querySelector('.bkview,.pk-inline');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'});}
+  document.addEventListener('click',function(e){
+    var t=e.target.closest?e.target:null;if(!t)return;
+    var k=t.closest('.boek[data-bk],.ond[data-bk]');
+    if(k){e.preventDefault();var bi=+k.getAttribute('data-bk');state.open=state.open===bi&&k.classList.contains('boek')?-1:bi;state.openCh=0;toonBoeken();naarBoven();return;}
+    var bs=t.closest('[data-bs]');if(bs){e.preventDefault();state.bsort=bs.getAttribute('data-bs');toonBoeken();return;}
+    var bf=t.closest('[data-bf]');if(bf){e.preventDefault();if(bf.getAttribute('data-bf')==='t')state.btest=bf.getAttribute('data-bv');else state.bch=bf.getAttribute('data-bv');toonBoeken();return;}
+    var c=t.closest('.chr[data-ch]');
+    if(c){e.preventDefault();state.openCh=+c.getAttribute('data-ch');toonBoeken();naarBoven();return;}
+    if(t.closest('[data-pkback]')){e.preventDefault();state.openCh=0;toonBoeken();return;}
+    if(t.closest('[data-pkbooks]')){e.preventDefault();state.open=-1;state.openCh=0;toonBoeken();}
+  });
+
+  var IKOON={
+    top:['ico-geel','<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.77 4 4 0 0 1 0 6.76 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.76 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>'],
+    vers:['ico-cyaan','<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 10h6"/><path d="M12 7v6"/>'],
+    ond:['ico-groen','<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/>'],
+    boek:['ico-donker','<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>']
+  };
+  function ikoon(soort){var k=IKOON[soort];return '<span class="ico '+k[0]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+k[1]+'</svg></span>';}
+  function filterHtml(res){
+    var box=document.getElementById('filters');
+    var ot=[],nt=[],i,ots=0,nts=0;
+    for(i=0;i<DATA.length;i++){
+      if(!res.per[i])continue;
+      if(i<39){ot.push(i);ots+=res.per[i];}else{nt.push(i);nts+=res.per[i];}
+    }
+    function knop(i){
+      var on=state.boek===DATA[i].name;
+      return '<button type="button" class="fb boek2'+(on?' on':'')+'" data-boek="'+esc(DATA[i].name)+'"><span>'+esc(DATA[i].name)+'</span><span class="n">'+res.per[i]+'</span></button>';
+    }
+    box.innerHTML='<h3>Filters</h3>'+
+      '<button type="button" class="fb'+(!state.boek?' on':'')+'" data-boek=""><span>'+T('Alles','All')+'</span><span class="n">'+res.tot+'</span></button>'+
+      (ot.length?'<div class="fgroep"><div class="ft">'+T('Oude Testament','Old Testament')+' ('+ots+')</div>'+ot.map(knop).join('')+'</div>':'')+
+      (nt.length?'<div class="fgroep"><div class="ft">'+T('Nieuwe Testament','New Testament')+' ('+nts+')</div>'+nt.map(knop).join('')+'</div>':'');
+    box.querySelectorAll('.fb').forEach(function(b){
+      b.onclick=function(){state.boek=b.getAttribute('data-boek');state.getoond=PER;render();};
+    });
+  }
+
+  function render(){
+    var q=state.q, res=state.res;
+    var sam=document.getElementById('samenvat');
+    var topBlok=document.getElementById('topBlok');
+    var lijstEl=document.getElementById('lijst');
+    var meer=document.getElementById('meer');
+    var leeg=document.getElementById('leeg');
+    var kop=document.getElementById('versKop');
+    var bk=document.getElementById('boekenBlok');
+    var filt=document.getElementById('filters');
+    if(!q.trim()){
+      sam.textContent=T('Kies een boek of typ een zoekwoord.','Choose a book or type a search word.');
+      topBlok.innerHTML='';lijstEl.innerHTML='';document.getElementById('versRij').hidden=true;meer.hidden=true;leeg.hidden=true;bk.innerHTML=bladerHtml();
+      return;
+    }
+    var rf=parseRef(q);
+    if(rf){
+      var rb=DATA[rf.bi],rtitel=(TITELS&&TITELS[rb.code]&&TITELS[rb.code][rf.ci-1])||'';
+      var rv=rf.vi?VERSEN.filter(function(v){return v.bi===rf.bi&&v.ci===rf.ci&&v.vi===rf.vi;})[0]:null;
+      sam.innerHTML=T('Gevonden: ','Found: ')+'<b>'+esc(rb.name)+' '+rf.ci+(rf.vi?':'+rf.vi:'')+'</b>';
+      filt.innerHTML='';leeg.hidden=true;bk.innerHTML='';meer.hidden=true;lijstEl.innerHTML='';document.getElementById('versRij').hidden=true;
+      var rh='<p class="kop met-ico">'+ikoon('top')+T('Top resultaat','Top result')+'</p>';
+      if(rv)rh+='<a class="top-res" href="'+vHref(rv)+'"><div class="ref">'+esc(rv.ref)+'</div><div class="tekst">'+esc(rv.tekst)+'</div></a>';
+      rh+='<a class="top-res" style="margin-top:12px" href="/'+BOEKSLUG[rf.bi]+'/'+rf.ci+'/"><div class="ref">'+esc(rb.name)+' '+rf.ci+(rtitel?' – '+esc(rtitel):'')+'</div><div class="tekst">'+T('Lees het hele hoofdstuk','Read the whole chapter')+'</div></a>';
+      topBlok.innerHTML=rh;
+      var tb=document.getElementById('titelBlok');if(tb)tb.innerHTML='';
+      return;
+    }
+    var bis=boekenVoor(q);
+    bk.innerHTML=bis.length?boekenHtml(bis):'';
+    if(res.tot>0)filterHtml(res);else filt.innerHTML='';
+    var lijst=res.treffers.filter(function(v){return !state.boek||DATA[v.bi].name===state.boek;});
+    var topV=lijst[0];
+    if(state.sort!=='rel'){lijst=lijst.slice().sort(function(a,b){return a.tekst.localeCompare(b.tekst,'nl',{sensitivity:'base'});});if(state.sort==='za')lijst.reverse();}
+    var tot=lijst.length;
+    if(res.tot===0){
+      sam.innerHTML=bis.length?'':T('Geen resultaten voor ','No results for ')+'<b>'+esc(q)+'</b>';
+      topBlok.innerHTML='';lijstEl.innerHTML='';document.getElementById('versRij').hidden=true;meer.hidden=true;
+      leeg.hidden=bis.length>0;leeg.textContent=T('Geen verzen gevonden. Probeer andere woorden.','No verses found. Try other words.');
+      return;
+    }
+    leeg.hidden=true;
+    sam.innerHTML='<b>'+tot.toLocaleString(EN?'en-US':'nl-NL')+'</b> '+T('Bijbel-resultaten voor','Bible results for')+' <b>“'+esc(q)+'”</b> '+T('uit','from')+' '+(EN?{sv:'the Statenvertaling (Dutch)',hsv:'the Herziene Statenvertaling (Dutch)',nbg51:'the NBG 1951 (Dutch)',kjv:'the King James Version'}[VERSEN_TOON]:({sv:'de Statenvertaling',hsv:'de Herziene Statenvertaling',nbg51:'de NBG-vertaling 1951',kjv:'de King James Version'}[VERSEN_TOON]||'de Statenvertaling'))+(state.boek?' '+T('in','in')+' '+esc(state.boek):'');
+    if(tot===0){topBlok.innerHTML='';lijstEl.innerHTML='<div class="leeg">'+T('Geen treffers in dit boek.','No matches in this book.')+'</div>';document.getElementById('versRij').hidden=true;meer.hidden=true;return;}
+    var top=topV;
+    document.getElementById('versKop').innerHTML=ikoon('vers')+T('Verzen','Verses');
+    topBlok.innerHTML='<p class="kop met-ico">'+ikoon('top')+T('Top resultaat','Top result')+'</p><a class="top-res" href="'+vHref(top)+'"><div class="ref">'+esc(top.ref)+'</div><div class="tekst">'+markeer(top.tekst,res.w,res.laatstePrefix)+'</div></a>';
+    document.getElementById('versRij').hidden=false;
+    renderTitels(q);
+    var einde=Math.max(PER,state.getoond||PER);
+    lijstEl.innerHTML=lijst.slice(0,einde).map(function(v){
+      return '<a class="rij" href="'+vHref(v)+'"><div class="ref">'+esc(v.ref)+'</div><div class="tekst">'+markeer(v.tekst,res.w,res.laatstePrefix)+'</div></a>';
+    }).join('');
+    state.getoond=einde;
+    meer.hidden=lijst.length<=einde;
+  }
+
+  function laadOnderwerpen(){
+    if(ONDERWERPEN)return Promise.resolve(ONDERWERPEN);
+    return fetch('/data/onderwerpen-nl.json').then(function(r){return r.json();}).then(function(d){
+      ONDERWERPEN=d.map(function(o){return {naam:o.name,nl:o.nl,n:o.n,b:o.b||[],zoek:norm(o.nl)+' '+norm(o.name)};});
+      return ONDERWERPEN;
+    });
+  }
+  function ondVoor(q){
+    var qn=norm(q); if(!ONDERWERPEN)return [];
+    if(!qn)return ONDERWERPEN.slice().sort(function(a,b){return b.n-a.n;});
+    var woorden=qn.split(' ');
+    return ONDERWERPEN.filter(function(o){
+      return woorden.every(function(w){return o.zoek.indexOf(w)>=0;});
+    }).sort(function(a,b){return b.n-a.n;});
+  }
+  // Onderwerp-filters: Testament (OT/NT via de boekcodes) en aantal teksten (n).
+  function ondIsOT(o){return (o.b||[]).some(function(c){for(var j=0;j<39;j++){if(DATA[j].code===c)return true;}return false;});}
+  function ondBoeken(o){return (o.b||[]).filter(function(c,i,a){return a.indexOf(c)===i;}).length;}
+  function ondPassend(o,f,m){
+    var nb=ondBoeken(o);
+    if(f==='b1'&&nb!==1)return false;
+    if(f==='b2-5'&&!(nb>=2&&nb<=5))return false;
+    if(f==='b6+'&&nb<6)return false;
+    if(m==='1-4'&&!(o.n>=1&&o.n<=4))return false;
+    if(m==='5-19'&&!(o.n>=5&&o.n<=19))return false;
+    if(m==='20+'&&!(o.n>=20))return false;
+    return true;
+  }
+  function filterOnd(lijst){
+    var box=document.getElementById('filters');
+    var f=state.ofilt||'alle', m=state.omvang||'alle';
+    function knop(groep,waarde,label,aantal){
+      var on=(groep==='f'?f:m)===waarde;
+      return '<button type="button" class="fb'+(on?' on':'')+'" data-groep="'+groep+'" data-waarde="'+waarde+'"><span>'+label+'</span><span class="n">'+aantal+'</span></button>';
+    }
+    var b1=lijst.filter(function(o){return ondPassend(o,'b1','alle');}).length;
+    var b2=lijst.filter(function(o){return ondPassend(o,'b2-5','alle');}).length;
+    var b6=lijst.filter(function(o){return ondPassend(o,'b6+','alle');}).length;
+    var m1=lijst.filter(function(o){return ondPassend(o,'alle','1-4');}).length;
+    var m2=lijst.filter(function(o){return ondPassend(o,'alle','5-19');}).length;
+    var m3=lijst.filter(function(o){return ondPassend(o,'alle','20+');}).length;
+    box.innerHTML='<h3>Filters</h3>'+
+      '<div class="fgroep"><div class="ft">'+T('Aantal boeken','Number of books')+'</div>'+
+        knop('f','alle',T('Alles','All'),lijst.length)+knop('f','b1',T('In 1 boek','In 1 book'),b1)+knop('f','b2-5',T('In 2 tot 5 boeken','In 2 to 5 books'),b2)+knop('f','b6+',T('In 6 of meer boeken','In 6 or more books'),b6)+
+      '</div>'+
+      '<div class="fgroep"><div class="ft">'+T('Aantal teksten','Number of verses')+'</div>'+
+        knop('m','alle',T('Alles','All'),lijst.length)+knop('m','1-4',T('1 tot 4 teksten','1 to 4 verses'),m1)+knop('m','5-19',T('5 tot 19 teksten','5 to 19 verses'),m2)+knop('m','20+',T('20 of meer','20 or more'),m3)+
+      '</div>';
+    box.querySelectorAll('.fb').forEach(function(b){
+      b.onclick=function(){
+        if(b.getAttribute('data-groep')==='f')state.ofilt=b.getAttribute('data-waarde');
+        else state.omvang=b.getAttribute('data-waarde');
+        renderOnd();
+      };
+    });
+  }
+  function renderOnd(){
+    var q=state.q;
+    var sam=document.getElementById('samenvat');
+    var topBlok=document.getElementById('topBlok');
+    var lijstEl=document.getElementById('lijst');
+    var meer=document.getElementById('meer');
+    var leeg=document.getElementById('leeg');
+    var bk=document.getElementById('boekenBlok');
+    var filt=document.getElementById('filters');
+    var rij=document.getElementById('versRij');
+    topBlok.innerHTML='';bk.innerHTML='';rij.hidden=true;meer.hidden=true;leeg.hidden=true;
+    laadOnderwerpen().then(function(){
+      var alle=ondVoor(q.trim());
+      if(!alle.length){
+        sam.innerHTML=T('Geen onderwerpen gevonden voor ','No topics found for ')+'<b>'+esc(q)+'</b>';
+        lijstEl.innerHTML='';filt.innerHTML='';
+        leeg.hidden=false;leeg.textContent=T('Probeer een ander woord, bijvoorbeeld een stamwoord zoals bid of gebed.','Try another word, for example a root word such as pray or prayer.');
+        return;
+      }
+      filterOnd(alle);
+      var lijst=alle.filter(function(o){return ondPassend(o,state.ofilt||'alle',state.omvang||'alle');});
+      lijst=lijst.slice();
+      if(state.sort==='az')lijst.sort(function(a,b){return ondNm(a).localeCompare(ondNm(b),EN?'en':'nl',{sensitivity:'base'});});
+      else if(state.sort==='za')lijst.sort(function(a,b){return ondNm(b).localeCompare(ondNm(a),EN?'en':'nl',{sensitivity:'base'});});
+      else lijst.sort(function(a,b){return b.n-a.n;});
+      sam.innerHTML='<b>'+lijst.length.toLocaleString(EN?'en-US':'nl-NL')+'</b> '+(q.trim()?T('onderwerpen voor','topics for')+' <b>“'+esc(q)+'”</b>':T('onderwerpen','topics'));
+      var rowOnd=document.getElementById('versRij');
+      rowOnd.hidden=false;
+      document.getElementById('versKop').innerHTML=ikoon('ond')+T('Onderwerpen','Topics');
+      var top=q.trim()?lijst[0]:null;
+      topBlok.innerHTML=top?'<p class="kop met-ico">'+ikoon('top')+T('Top resultaat','Top result')+'</p><a class="top-res topond" href="/onderwerpen/?onderwerp='+encodeURIComponent(top.naam)+'"><div class="ref">'+esc(ondNm(top))+'</div><div class="tekst">'+nT(top.n)+'</div></a>':'';
+      var mx=state.ondMax||200;meer.hidden=lijst.length<=mx;
+      lijstEl.innerHTML='<div class="ondlijst">'+lijst.slice(0,mx).map(function(o){
+        return '<a class="ond" href="/onderwerpen/?onderwerp='+encodeURIComponent(o.naam)+'"><span class="nl">'+esc(ondNm(o))+'</span><span class="n">'+nT(o.n)+'</span></a>';
+      }).join('')+'</div>';
+    });
+  }
+  function zetTab(t){
+    state.tab=t;
+    document.getElementById('tabBijbel').classList.toggle('on',t==='bijbel');
+    document.getElementById('tabOnd').classList.toggle('on',t==='onderwerpen');
+    zetUrl();
+    if(t==='onderwerpen')renderOnd();else render();
+  }
+
+  function zetUrl(){
+    var par=[];if(state.q.trim())par.push('q='+encodeURIComponent(state.q));if(state.tab==='onderwerpen')par.push('t=o');
+    var v=new URLSearchParams(location.search).get('v');if(v)par.push('v='+encodeURIComponent(v));
+    history.replaceState(null,'','/zoeken/'+(par.length?'?'+par.join('&'):''));
+  }
+  function zet(q){
+    state.q=q;state.open=-1;state.openCh=0;state.boek='';state.ofilt='alle';state.omvang='alle';state.getoond=PER;state.ondMax=200;
+    state.res=q.trim()?zoek(q.trim()):null;
+    if(state.res&&!/\s$/.test(q))state.res=zoek(q);
+    zetUrl();
+    document.title=(q.trim()?'“'+q.trim()+'” | ':'')+T('Zoeken in de Bijbel','Search the Bible')+' | De Samenkomst';
+    if(state.tab==='onderwerpen')renderOnd();else render();
+  }
+
+  var EMBED=new URLSearchParams(location.search).get('embed')==='1';
+  if(EMBED){
+    document.documentElement.classList.add('embed');
+    document.head.insertAdjacentHTML('beforeend','<base target="_top">');
+  }
+  window.addEventListener('message',function(e){
+    if(e.origin!==location.origin||!e.data||e.data.type!=='zoek')return;
+    document.getElementById('q').value=e.data.q;
+    zet(e.data.q);
+  });
+  var inp=document.getElementById('q');
+  inp.addEventListener('input',function(){
+    if(!VERSEN)return;
+    zet(inp.value);
+  });
+  document.getElementById('zoekform').addEventListener('submit',function(e){
+    e.preventDefault();
+    zet(inp.value);
+  });
+  document.getElementById('tabBijbel').addEventListener('click',function(){zetTab('bijbel');});
+  document.getElementById('tabOnd').addEventListener('click',function(){zetTab('onderwerpen');});
+  document.querySelectorAll('.sorteer button').forEach(function(b){
+    b.addEventListener('click',function(){
+      state.sort=b.getAttribute('data-s');
+      document.querySelectorAll('.sorteer button').forEach(function(x){x.classList.toggle('on',x===b);});
+      if(state.tab==='onderwerpen')renderOnd();else render();
+    });
+  });
+  document.getElementById('meer').addEventListener('click',function(){
+    if(state.tab==='onderwerpen'){state.ondMax=(state.ondMax||200)+200;renderOnd();return;}
+    state.getoond=(state.getoond||PER)+PER;
+    render();
+  });
+
+  if(EN){
+    document.documentElement.lang='en';
+    document.title='Search the Bible | De Samenkomst';
+    var sT=function(sel,txt,attr){var e=document.querySelector(sel);if(!e)return;if(attr)e.setAttribute(attr,txt);else e.textContent=txt;};
+    sT('#q','Search the Bible…','placeholder');sT('#q','Search the Bible','aria-label');
+    sT('#zoekform button[type=submit]','Search','aria-label');
+    sT('#tabBijbel','Bible');sT('#tabOnd','Topics');sT('#samenvat','Loading…');
+    sT('#meer','More results');sT('.sorteer','Sort','aria-label');
+    sT('.sorteer button[data-s=rel]','Relevance');
+    sT('#filters','Filters','aria-label');sT('.logo img','Bible Online','alt');
+    sT('#ver','Choose translation','aria-label');
+  }
+  var start=new URLSearchParams(location.search).get('q')||'';
+  inp.value=start;
+  laad().then(function(){
+    document.getElementById('tabBijbel').classList.toggle('on',state.tab!=='onderwerpen');
+    document.getElementById('tabOnd').classList.toggle('on',state.tab==='onderwerpen');
+    zet(start);
+  }).catch(function(){
+    document.getElementById('samenvat').textContent=T('De zoekgegevens konden niet worden geladen.','The search data could not be loaded.');
+  });
+})();
+</script>
+<script>(function(){try{var q=new URLSearchParams(location.search).get('q');if(!q||!q.trim())return;q=q.trim();var L=(localStorage.getItem('bible-locale')||document.documentElement.lang||'nl').toLowerCase().indexOf('en')===0?'en':'nl';var K='onk-recent-'+L,T='onk-zoekteller-'+L;var r=JSON.parse(localStorage.getItem(K)||'[]');if(r[0]!==q){r=r.filter(function(x){return x!==q;});r.unshift(q);localStorage.setItem(K,JSON.stringify(r.slice(0,6)));var t=JSON.parse(localStorage.getItem(T)||'{}');t[q]=(t[q]||0)+1;localStorage.setItem(T,JSON.stringify(t));}}catch(e){}})();</script>
+<script>(function(){try{
+  /* Zelfde zoekbalk als Home: tik in de lege balk = recente en populaire zoekopdrachten onder de balk */
+  var f=document.getElementById('zoekform'),q=document.getElementById('q');if(!f||!q)return;
+  var L=(localStorage.getItem('bible-locale')||document.documentElement.lang||'nl').toLowerCase().indexOf('en')===0?'en':'nl';
+  function tx(nl,en){return L==='en'?en:nl;}
+  function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  var box=document.createElement('div');box.className='zp';box.hidden=true;f.appendChild(box);
+  function recent(){try{return JSON.parse(localStorage.getItem('onk-recent-'+L)||'[]');}catch(e){return [];}}
+  function pop(){try{var c=JSON.parse(localStorage.getItem('onk-pop-'+L)||'null');return c&&Array.isArray(c.l)?c.l.slice(0,5):[];}catch(e){return [];}}
+  var HIST='<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>';
+  var FLAME='<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>';
+  function rij(t,p){return '<button type="button" class="zp-r" data-q="'+esc(t)+'"><span class="zp-i"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg></span><span>'+esc(t)+'</span></button>';}
+  function toon(){
+    if(q.value.trim()){box.hidden=true;return;}
+    var P=pop(),R=recent(),h='';
+    if(P.length)h+='<div class="zp-k">'+tx('Populaire zoekopdrachten','Popular searches')+'</div>'+P.map(function(t){return rij(t,FLAME);}).join('');
+    if(R.length)h+='<div class="zp-k zp-rij"><span>'+tx('Recente zoekopdrachten','Recent searches')+'</span><button type="button" class="zp-w">'+tx('Verwijderen','Clear')+'</button></div>'+R.map(function(t){return rij(t,HIST);}).join('');
+    if(!h){box.hidden=true;return;}
+    box.innerHTML=h;box.hidden=false;
+  }
+  q.addEventListener('focus',toon);
+  q.addEventListener('click',toon);
+  q.addEventListener('input',function(){if(q.value.trim())box.hidden=true;else toon();});
+  q.addEventListener('blur',function(){setTimeout(function(){if(document.activeElement!==q)box.hidden=true;},180);});
+  box.addEventListener('mousedown',function(e){e.preventDefault();});
+  box.addEventListener('click',function(e){
+    var w=e.target.closest('.zp-w');
+    if(w){try{localStorage.removeItem('onk-recent-'+L);}catch(x){}toon();return;}
+    var b=e.target.closest('[data-q]');if(!b)return;
+    q.value=b.getAttribute('data-q');box.hidden=true;
+    q.dispatchEvent(new Event('input',{bubbles:true}));q.focus();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')box.hidden=true;});
+  /* vergrootglas links in de balk: focus de balk */
+  var ic=f.querySelector('svg');if(ic){ic.style.cursor='text';ic.addEventListener('click',function(){q.focus();});}
+}catch(err){}})();</script>
+<script src="/onk-tabs.js?v=1"></script>
+</body>
+</html>

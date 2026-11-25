@@ -1,0 +1,28 @@
+{
+  "name": "De Bijbel Online",
+  "short_name": "De Bijbel",
+  "description": "De Bijbel online lezen in de Statenvertaling, King James Version en NBG 1951 — met parallelweergave, markeren en de woorden van Jezus in rood.",
+  "icons": [
+    {
+      "src": "icon.png?v=bijbel5",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png?v=bijbel5",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#3C5E70",
+  "background_color": "#f4f6f7",
+  "display": "standalone",
+  "start_url": "./",
+  "categories": [
+    "books",
+    "reference",
+    "education"
+  ]
+}

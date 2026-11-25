@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Beheer forum-sleutel</title>
+<style>
+:root{--paper:#f4f6f7;--surface:#fff;--ink:#1d2b33;--ink-soft:#3C5E70;--ink-muted:#9aa7af;--header:#3C5E70;--header-deep:#2c4757;--line:rgba(29,43,51,.1);--danger:#b4412f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#f4f6f7}}
+:root[data-theme="dark"]{--paper:#f4f6f7}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+h1{font-family:"DM Sans",Inter,system-ui,sans-serif;font-weight:600;font-size:20px;margin:8px 0 6px}
+p{font-size:14px;color:var(--ink-soft);line-height:1.5;margin:0 0 14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px}
+input[type=password],input[type=text]{width:100%;box-sizing:border-box;height:44px;border:1px solid rgba(29,43,51,.15);border-radius:10px;padding:0 12px;font-size:15px;background:var(--surface);color:var(--ink)}
+input:focus{outline:none;border-color:rgba(60,94,112,.5);box-shadow:0 0 0 3px rgba(60,94,112,.18)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{height:40px;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid rgba(29,43,51,.15);background:var(--surface);color:var(--ink)}
+button.primair{background:var(--header);border-color:var(--header);color:#fff}
+button.primair:hover{background:var(--header-deep)}
+button:hover{background:#eaeef0}
+button:disabled{opacity:.5;cursor:default}
+.uitvoer{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:#eaeef0;border-radius:10px;padding:12px;white-space:pre-wrap;word-break:break-word;min-height:44px;color:var(--ink)}
+.fout{color:var(--danger)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Beheer forum-sleutel</h1>
+  <p>Plak hier de geheime sleutel. Hij wordt alleen in het geheugen van deze pagina bewaard: niet in de HTML, niet in de opslag van de browser, niet in de repo en niet in logs. Verversen of sluiten van de pagina haalt hem weg. Een test stuurt hem één keer via onze eigen server naar het forum.</p>
+
+  <div class="card">
+    <label for="sleutel">Geheime sleutel</label>
+    <input id="sleutel" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Plak de sleutel hier">
+    <div class="row">
+      <button class="primair" id="bewaar">Gebruik deze sleutel</button>
+      <button id="wis">Wis sleutel</button>
+    </div>
+    <p style="margin:12px 0 0;font-size:13px" id="status"></p>
+  </div>
+
+  <div class="card">
+    <label>Test: verbinding met het forum</label>
+    <p>Vraagt de lijst met discussies op. Toont alleen de HTTP-status en het aantal discussies, geen namen of e-mailadressen.</p>
+    <div class="row"><button class="primair" id="test">Test verbinding</button></div>
+    <div class="uitvoer" id="uitvoer" style="margin-top:12px">Nog geen test.</div>
+  </div>
+</main>
+<script>
+(function () {
+  // De sleutel bestaat alleen in deze variabele: geen sessionStorage, geen localStorage, geen cookie.
+  var sleutel = '';
+  var inv = document.getElementById('sleutel');
+  var status = document.getElementById('status');
+  var uit = document.getElementById('uitvoer');
+  var test = document.getElementById('test');
+
+  function getKey() { return sleutel; }
+  function setKey(v) { sleutel = v; }
+  function clearKey() { sleutel = ''; }
+
+  function refresh() {
+    var k = getKey();
+    status.textContent = k ? 'Sleutel staat klaar in het geheugen van deze pagina.' : 'Nog geen sleutel ingevoerd.';
+    status.className = k ? '' : 'fout';
+  }
+
+  document.getElementById('bewaar').addEventListener('click', function () {
+    var v = inv.value.trim();
+    if (!v) { status.textContent = 'Plak eerst een sleutel.'; status.className = 'fout'; return; }
+    setKey(v);
+    inv.value = '';
+    refresh();
+  });
+
+  document.getElementById('wis').addEventListener('click', function () {
+    clearKey();
+    inv.value = '';
+    uit.textContent = 'Nog geen test.';
+    refresh();
+  });
+
+  test.addEventListener('click', function () {
+    var k = getKey();
+    if (!k) { uit.textContent = 'Geen sleutel in deze tab. Plak hem eerst hierboven.'; uit.className = 'uitvoer fout'; return; }
+    test.disabled = true;
+    uit.textContent = 'Bezig…';
+    uit.className = 'uitvoer';
+    fetch('/api/forum-proxy?path=' + encodeURIComponent('api/topics.php'), {
+      headers: { 'X-Forum-Key': k }, cache: 'no-store'
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { http: r.status, j: j }; });
+    }).then(function (x) {
+      var j = x.j || {};
+      if (x.http === 401) { uit.textContent = 'Geen sleutel ontvangen.'; uit.className = 'uitvoer fout'; return; }
+      if (j.error) { uit.textContent = 'Fout: ' + j.error; uit.className = 'uitvoer fout'; return; }
+      var aantal = '?';
+      try {
+        var d = JSON.parse(j.body || '');
+        if (d && Array.isArray(d.topics)) aantal = d.topics.length;
+        else if (d && Array.isArray(d)) aantal = d.length;
+      } catch (e) {}
+      var ok = j.status >= 200 && j.status < 300 && aantal !== '?';
+      uit.textContent = 'Forum HTTP ' + j.status + '\nAantal discussies: ' + aantal + (ok ? '\nVerbinding werkt.' : '\nSleutel of pad klopt niet (zie status).');
+      uit.className = 'uitvoer' + (ok ? '' : ' fout');
+    }).catch(function () {
+      uit.textContent = 'Geen verbinding met onze server.';
+      uit.className = 'uitvoer fout';
+    }).then(function () { test.disabled = false; });
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

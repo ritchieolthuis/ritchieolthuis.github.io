@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://deonlinebijbel.nl/sitemap.xml
+Sitemap: https://deonlinebijbel.nl/sitemap-onderwerpen.xml
