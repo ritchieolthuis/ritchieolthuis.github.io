@@ -28,26 +28,20 @@ function section(re){var h=heading(re);if(!h)return null;var best=h,p=h.parentEl
 function aria(re){var rs=roots();for(var i=0;i<rs.length;i++){var l=rs[i].querySelectorAll('[aria-label],[title]');for(var j=0;j<l.length;j++){var a=(l[j].getAttribute('aria-label')||l[j].getAttribute('title')||'');if(re.test(a)&&vis(l[j]))return l[j]}}return null}
 function firstVis(list){for(var i=0;i<list.length;i++){var e=typeof list[i]==='function'?list[i]():q1(list[i]);if(e&&vis(e))return e}return null}
 
-/* ---------- de echte menu's openen en sluiten (zo laat de rondleiding alles ook echt zien) ---------- */
-function fire(e,type,x,y,Ctor){try{e.dispatchEvent(new (Ctor||MouseEvent)(type,{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y,button:0,buttons:type.indexOf('up')>=0||type==='click'?0:1,pointerType:'mouse',pointerId:1,isPrimary:true}))}catch(x){}}
-var lastTap=0;
+
+/* ---------- taken: wat de gebruiker echt kan aantikken, en hoe we zien dat het gelukt is ---------- */
+function searchInput(){var rs=roots();for(var i=0;i<rs.length;i++){var l=rs[i].querySelectorAll('input[type=search],input.rounded-full');for(var j=0;j<l.length;j++)if(vis(l[j]))return l[j]}return null}
+function closeSearch(){var i=searchInput();if(i){try{var st=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;st.call(i,'');i.dispatchEvent(new Event('input',{bubbles:true}))}catch(e){}try{i.blur()}catch(e){}try{document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',keyCode:27,bubbles:true}))}catch(e){}}}
+function pickerEl(){var e=q1('.onk-pk');return e&&vis(e)?e:null}
+function pickerPill(){var h=q1('.relative.z-10.flex-none.flex-nowrap');if(!h)return null;var best=null;h.querySelectorAll('button,div,a').forEach(function(e){var t=(e.textContent||'').trim(),b=e.getBoundingClientRect();if(t.length>3&&t.length<40&&/\d+(:\d+)?$/.test(t)&&b.width>90&&b.height>20&&b.height<80&&(!best||b.width*b.height<best.b.width*best.b.height))best={e:e,b:b}});return best?best.e:h}
+function closePicker(){if(!pickerEl())return;try{document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',keyCode:27,bubbles:true}))}catch(e){}setTimeout(function(){if(pickerEl()){var p=pickerPill();p&&p.click()}},250)}
+function firstVerse(){var l=document.querySelectorAll('sup[data-v]'),best=null;for(var i=0;i<l.length;i++){var p=l[i].parentElement,r=p.getBoundingClientRect();if(r.width>100&&r.top>96&&r.top<innerHeight-220){return p}if(!best&&r.width>100)best=p}return best}
+function sheetEl(){var b=byText('button',/^(Kopiëren|Copy)$/i);return b&&(b.closest('[class*="rounded-t"]')||b.parentElement.parentElement)}
 function sheetOpen(){var rs=roots();for(var i=0;i<rs.length;i++){var l=rs[i].querySelectorAll('button');for(var j=0;j<l.length;j++){if(/^(Kopiëren|Copy)$/i.test((l[j].textContent||'').trim()))return true}}return false}
-function openVerseSheet(n){   /* n = poging: 0 gewone tik, 1 met tekstselectie, 2 tik op het versnummer */
-  if(sheetOpen()||Date.now()-lastTap<4000)return;   /* nooit tikken terwijl het menu al open is (een tweede tik sluit het) */
-  var sp=q1('sup[data-v="16"]'),v=sp&&sp.parentElement;if(!v)return;
-  var r=v.getBoundingClientRect(),x=r.left+Math.min(40,r.width/2),y=r.top+Math.min(30,r.height/2),tgt=v;
-  function seq(e,list){list.forEach(function(t){fire(e,t,x,y,t.indexOf('pointer')===0&&window.PointerEvent?PointerEvent:MouseEvent)})}
-  n=n||0;
-  if(n===1){try{var rg=document.createRange();rg.selectNodeContents(v);var sel=getSelection();sel.removeAllRanges();sel.addRange(rg)}catch(e){}seq(v,['pointerdown','mousedown','pointerup','mouseup','click'])}
-  else if(n>=2){tgt=sp;seq(tgt,['pointerdown','mousedown','pointerup','mouseup','click'])}
-  else{seq(v,['pointerover','pointerdown','mousedown','pointerup','mouseup','click'])}
-}
-function closeSheet(){
-  if(!byText('button',/^(Kopiëren|Copy)$/i))return;
-  try{['keydown','keyup'].forEach(function(t){document.dispatchEvent(new KeyboardEvent(t,{key:'Escape',code:'Escape',keyCode:27,bubbles:true}))})}catch(e){}
-}
+function closeSheet(){if(!sheetOpen())return;try{['keydown','keyup'].forEach(function(t){document.dispatchEvent(new KeyboardEvent(t,{key:'Escape',code:'Escape',keyCode:27,bubbles:true}))})}catch(e){}}
 function gearBtn(){return aria(/^(Leesinstellingen|Reading settings)/i)}
-function popupOf(re){   /* kleinste zwevende kader dat deze tekst bevat */
+var SET_RE=/(Tekstgrootte|Lettergrootte|Lettertype|Text size|Font size)/i;
+function popupOf(re){   /* kleinste zwevende kader dat deze tekst bevat (niet onze eigen kaart) */
   var best=null,rs=roots();
   rs.forEach(function(r){r.querySelectorAll('div,section,aside').forEach(function(e){
     if(e.closest('#otr')||!re.test(e.textContent||'')||!vis(e))return;var b=e.getBoundingClientRect();
@@ -57,17 +51,15 @@ function popupOf(re){   /* kleinste zwevende kader dat deze tekst bevat */
   })});
   return best;
 }
-var SET_RE=/(Tekstgrootte|Lettergrootte|Lettertype|Text size|Font size)/i;
-function openSettings(){if(!popupOf(SET_RE)){var g=gearBtn();g&&g.click()}}
 function closeSettings(){if(popupOf(SET_RE)){var g=gearBtn();g&&g.click()}}
-function openMeer(){var b=q1('.onk-meer');if(b&&!document.querySelector('.onk-mm.open'))b.click()}
-function closeMeer(){var b=q1('.onk-meer');if(b&&document.querySelector('.onk-mm.open'))b.click()}
-
+function meerOpen(){return document.querySelector('.onk-mm.open')}
+function closeMeer(){var b=q1('.onk-meer');if(b&&meerOpen())b.click()}
 function samBtn(){   /* de + Vriend-knop van De Samenkomst (alleen als jullie nog geen vrienden zijn) */
   var out=null;roots().forEach(function(r){if(out)return;r.querySelectorAll('[data-follow]').forEach(function(b){
     if(out||!vis(b))return;var row=rowOf(b);if(/De Samenkomst/i.test((row.textContent||'').slice(0,80))&&/\+/.test(b.textContent))out=b})});
   return out}
 function rowOf(b){var p=b;while(p.parentElement&&p.parentElement.getBoundingClientRect().height<140&&p.parentElement.querySelectorAll('[data-follow]').length===1)p=p.parentElement;return p}
+
 /* ---------- pagina-herkenning ---------- */
 var P={
  home:{url:'/',is:function(){return document.documentElement.classList.contains('onk-home')||!!heading(/^(Lees de Bijbel online|Read the Bible online)/i)}},
@@ -78,42 +70,55 @@ var P={
  comm:{url:function(){return en()?'/community/#members':'/gemeenschap/#leden'},is:function(){return /^\/(gemeenschap|community)\//.test(location.pathname)}},
  profile:{url:function(){return en()?'/profile/':'/profiel/'},is:function(){return /^\/(profiel|profile)\//.test(location.pathname)}}
 };
-function onPage(k){try{return P[k].is()}catch(e){return false}}
-function pageUrl(k){var u=P[k].url;return typeof u==='function'?u():u}
+function onPage(k){if(!k)return true;try{return P[k].is()}catch(e){return false}}
+function pageUrl(k){if(!k)return location.pathname;var u=P[k].url;return typeof u==='function'?u():u}
 
 /* ---------- stappen ---------- */
 var S=[
  {id:'welcome',page:'home',big:1,ic:'hand',
   t:[['Welkom bij De Bijbel Online','Welcome to The Bible Online'],['Samen kijken we in twee minuten waar je de Bijbel leest, hoe je teksten bewaart en waar je anderen vindt. Je kunt altijd stoppen.','In two minutes we will look at where you read the Bible, how you save verses and where you find others. You can stop at any time.']]},
- {id:'search',page:'home',ic:'search',target:[function(){var i=q1('input[type=search],input.rounded-full');return i&&(i.closest('form')||i.parentElement)}],
-  t:[['Zoek alles op één plek','Search everything in one place'],['Typ een vers, een woord of een onderwerp. De zoekbalk begrijpt "in den beginne" net zo goed als "Johannes 3:16" en zoekt in alle vertalingen.','Type a verse, a word or a topic. The search bar understands "in the beginning" as well as "John 3:16" and looks in every translation.']]},
+ {id:'search',page:'home',ic:'search',close:closeSearch,target:[function(){var i=searchInput();return i&&(i.closest('form')||i.parentElement)}],
+  t:[['Zoek in de Bijbel','Search the Bible'],['Tik in de zoekbalk en typ een woord, bijvoorbeeld "liefde".','Tap the search bar and type a word, for example "love".']],
+  try:{req:1,hint:['Typ een woord, bijvoorbeeld "liefde".','Type a word, for example "love".'],done:function(){var i=searchInput();return !!(i&&String(i.value||'').trim().length>=2)}},
+  t2:[['Zoeken in alle vertalingen','Search every translation'],['Dit zoekt in alle vertalingen tegelijk, ook als je een vers of een onderwerp typt.','This searches every translation at once, also when you type a verse or a topic.']]},
  {id:'votd',page:'home',ic:'sun',target:[function(){return section(/^(Vers van de dag|Verse of the day)/i)}],
-  t:[['Elke dag een nieuw vers','A new verse every day'],['Het vers van de dag staat bovenaan. Tik erop om het hele hoofdstuk te lezen.','The verse of the day is at the top. Tap it to read the whole chapter.']]},
+  t:[['Elke dag een nieuw vers','A new verse every day'],['Het vers van de dag staat bovenaan. Je kunt erop tikken om het hele hoofdstuk te lezen.','The verse of the day is at the top. You can tap it to read the whole chapter.']]},
  {id:'books',page:'home',ic:'book',target:[function(){var h=byText('h2,h3,div,span',/^(Oude Testament|Old Testament)$/i);return h?card(h):section(/^(Kies een bijbelboek|Choose a (Bible )?book)/i)}],
-  t:[['Kies zelf een bijbelboek','Pick a book yourself'],['Oude en Nieuwe Testament staan naast elkaar. Tik op een boek en daarna op een hoofdstuk.','Old and New Testament sit side by side. Tap a book, then a chapter.']]},
- {id:'tabs',page:'home',ic:'grid',target:['nav.onk-tabbar','.onk-sidebar','nav[class*=side],aside'],
-  t:[['Zo kom je overal','This is how you get around'],['Home, Bijbel, Leesplannen, Gemeenschap en Meer. Onder Meer vind je je profiel, onderwerpen, artikelen en het evangelie.','Home, Bible, Plans, Community and More. Under More you find your profile, topics, articles and the gospel.']]},
- {id:'picker',page:'read',ic:'pin',target:[function(){var h=q1('.relative.z-10.flex-none.flex-nowrap');if(!h)return null;var best=null;h.querySelectorAll('button,div,a').forEach(function(e){var t=(e.textContent||'').trim(),b=e.getBoundingClientRect();if(t.length>3&&t.length<40&&/\d+(:\d+)?$/.test(t)&&b.width>90&&b.height>20&&b.height<80&&(!best||b.width*b.height<best.b.width*best.b.height))best={e:e,b:b}});return best?best.e:h}],
-  t:[['Hier lees je de Bijbel','This is where you read'],['Bovenin staat waar je bent. Tik op de balk om een ander boek, hoofdstuk of vers te kiezen.','The bar at the top shows where you are. Tap it to choose another book, chapter or verse.']]},
- {id:'verse',page:'read',ic:'tap',tap:1,target:[function(){var s=q1('sup[data-v="16"]');return s&&s.parentElement}],
-  t:[['Tik op een vers','Tap a verse'],['Elk vers heeft een eigen menu. Probeer het: tik op vers 16.','Every verse has its own menu. Try it: tap verse 16.']]},
- {id:'sheet',page:'read',ic:'pen',noNav:1,open:openVerseSheet,close:closeSheet,target:[function(){var b=byText('button',/^(Kopiëren|Copy)$/i);return b&&(b.closest('[class*="rounded-t"]')||b.parentElement.parentElement)}],
-  t:[['Wat je met een vers kunt doen','What you can do with a verse'],['Markeer in een kleur, kopieer, sla op als favoriet, schrijf een aantekening of maak er een afbeelding van om te delen.','Highlight in a colour, copy, save as a favorite, write a note or turn it into an image to share.']]},
- {id:'settings',page:'read',ic:'gear',open:openSettings,close:closeSettings,multi:1,target:[function(){return popupOf(SET_RE)},gearBtn],
-  t:[['Maak het prettig om te lezen','Make it comfortable to read'],['Met het tandwiel stel je lettergrootte, lettertype, regelafstand en weergave in. Probeer iets, het past meteen toe.','The gear sets text size, font, line spacing and layout. Try something, it applies at once.']]},
- {id:'meer',page:'read',ic:'grid',open:openMeer,close:closeMeer,multi:1,target:['.onk-mm.open','.onk-meer'],
-  t:[['Meer opties bij het lezen','More reading options'],['Onder de drie puntjes wissel je van vertaling (SV, HSV, NBG 1951, KJV), lees je twee vertalingen naast elkaar en open je de tijdlijn.','Under the three dots you switch translation (SV, HSV, NBG 1951, KJV), read two translations side by side and open the timeline.']]},
+  t:[['Kies een bijbelboek','Pick a book'],['Tik op een boek, bijvoorbeeld Genesis. De Bijbel opent meteen bij dat boek.','Tap a book, for example Genesis. The Bible opens right at that book.']],
+  try:{req:1,auto:1,hint:['Tik op een bijbelboek, bijvoorbeeld Genesis.','Tap a book, for example Genesis.'],done:function(){return onPage('read')&&!onPage('home')}}},
+ {id:'picker',page:'read',ic:'pin',target:[pickerPill],target2:[function(){return pickerEl()}],close:closePicker,
+  t:[['Hier lees je de Bijbel','This is where you read'],['Bovenin staat waar je bent. Tik erop om een ander boek of hoofdstuk te kiezen.','The bar at the top shows where you are. Tap it to choose another book or chapter.']],
+  try:{req:0,hint:['Tik op de balk bovenin.','Tap the bar at the top.'],done:function(){return !!pickerEl()}},
+  t2:[['Boek, hoofdstuk en vers','Book, chapter and verse'],['Kies een boek, daarna een hoofdstuk en een vers. Kijk gerust rond.','Pick a book, then a chapter and a verse. Feel free to look around.']]},
+ {id:'verse',page:'read',ic:'tap',close:closeSheet,target:[firstVerse],target2:[sheetEl],
+  t:[['Tik op een vers','Tap a verse'],['Elk vers heeft een eigen menu.','Every verse has its own menu.']],
+  try:{req:1,hint:['Tik op een vers.','Tap a verse.'],done:function(){return sheetOpen()}},
+  t2:[['Wat je met een vers kunt doen','What you can do with a verse'],['Markeer in een kleur, voeg toe aan favorieten, schrijf een aantekening, kopieer of deel. Alles werkt echt.','Highlight in a colour, add to favorites, write a note, copy or share. Everything really works.']]},
+ {id:'settings',page:'read',ic:'gear',close:closeSettings,multi2:1,target:[gearBtn],target2:[function(){return popupOf(SET_RE)},gearBtn],
+  t:[['Maak het prettig om te lezen','Make it comfortable to read'],['Tik op het tandwiel om de lettergrootte en het lettertype aan te passen.','Tap the gear to change the text size and font.']],
+  try:{req:0,hint:['Tik op het tandwiel.','Tap the gear.'],done:function(){return !!popupOf(SET_RE)}},
+  t2:[['Jouw leesinstellingen','Your reading settings'],['Ook regelafstand en weergave stel je hier in. Probeer maar, het past meteen toe.','Line spacing and layout are here too. Just try, it applies at once.']]},
+ {id:'meer',page:'read',ic:'grid',close:closeMeer,multi2:1,target:['.onk-meer'],target2:['.onk-mm.open','.onk-meer'],
+  t:[['Meer opties bij het lezen','More reading options'],['Tik op de drie puntjes.','Tap the three dots.']],
+  try:{req:0,hint:['Tik op de drie puntjes.','Tap the three dots.'],done:function(){return !!meerOpen()}},
+  t2:[['Vertaling, naast elkaar, tijdlijn','Translation, side by side, timeline'],['Wissel van vertaling (SV, HSV, NBG 1951, KJV), lees twee vertalingen naast elkaar of open de tijdlijn.','Switch translation (SV, HSV, NBG 1951, KJV), read two translations side by side or open the timeline.']]},
  {id:'nav',page:'read',ic:'next',target:['.onk-nav'],
-  t:[['Verder lezen','Keep reading'],['Onderaan ga je naar het vorige of volgende hoofdstuk. Op de telefoon verbergt de ronde knop alles behalve de tekst, voor rustig lezen.','At the bottom you go to the previous or next chapter. On a phone the round button hides everything except the text, for quiet reading.']]},
+  t:[['Verder lezen','Keep reading'],['Tik op Volgende om naar het volgende hoofdstuk te gaan.','Tap Next to go to the next chapter.']],
+  try:{req:0,hint:['Tik op Volgende.','Tap Next.'],base:function(){return location.pathname+location.search},done:function(){return (location.pathname+location.search)!==S[cur].try.__b}},
+  t2:[['Dat was het volgende hoofdstuk','That was the next chapter'],['Met Vorige ga je terug. Op de telefoon verbergt de ronde knop alles behalve de tekst, voor rustig lezen.','Previous takes you back. On a phone the round button hides everything except the text, for quiet reading.']]},
+ {id:'tabs',page:null,ic:'grid',target:['nav.onk-tabbar','.onk-sidebar','nav[class*=side],aside'],
+  t:[['Zo kom je overal','This is how you get around'],['Home, Bijbel, Leesplannen, Gemeenschap en Meer. Onder Meer vind je je profiel, onderwerpen, artikelen en het evangelie.','Home, Bible, Plans, Community and More. Under More you find your profile, topics, articles and the gospel.']]},
  {id:'plans',page:'plans',auth:1,ic:'list',target:[function(){var b=byText('button,a',/^(Start|Starten)$/i);return b&&(b.closest('li,article,[class*=rounded-2xl],[class*=rounded-xl]')||b.parentElement)},function(){return heading(/^(Leesplannen|Reading plans)$/i)}],
   t:[['Lees met een plan','Read with a plan'],['Een leesplan geeft je elke dag een stukje. De cirkel vult zich vers voor vers terwijl je leest en je krijgt een badge als je klaar bent.','A reading plan gives you a little each day. The circle fills verse by verse as you read, and you earn a badge when you finish.']]},
  {id:'community',page:'comm',auth:1,ic:'users',target:['.tabs3','.yt','.chips2'],
   t:[['Lees samen','Read together'],['In de Gemeenschap staan berichten, kanalen en leden. Deel een vers dat je raakte of volg wat anderen lezen.','The Community has posts, channels and members. Share a verse that touched you or follow what others read.']]},
- {id:'follow',page:'comm',auth:1,ic:'users',tap:1,optional:1,target:[function(){var b=samBtn();return b?rowOf(b):null}],tapEl:function(){return samBtn()},
-  t:[['Maak vrienden, begin bij De Samenkomst','Make friends, start with De Samenkomst'],['Met + Vriend stuur je een vriendverzoek. Dit is echt: probeer het bij De Samenkomst. Als wij terugvolgen zijn we vrienden en zie je wat wij delen.','With + Friend you send a friend request. This is real: try it with De Samenkomst. If we follow back we are friends and you see what we share.']]},
+ {id:'follow',page:'comm',auth:1,ic:'users',optional:1,target:[function(){var b=samBtn();return b?rowOf(b):null}],target2:[function(){var b=null;roots().forEach(function(r){if(b)return;r.querySelectorAll('[data-follow]').forEach(function(x){if(!b&&vis(x)&&/De Samenkomst/i.test((rowOf(x).textContent||'').slice(0,80)))b=rowOf(x)})});return b}],
+  t:[['Maak vrienden, begin bij De Samenkomst','Make friends, start with De Samenkomst'],['Tik op + Vriend om een vriendverzoek te sturen. Dit is echt.','Tap + Friend to send a friend request. This is real.']],
+  try:{req:1,hint:['Tik op + Vriend bij De Samenkomst.','Tap + Friend next to De Samenkomst.'],done:function(){return !samBtn()}},
+  t2:[['Verzoek verstuurd','Request sent'],['Zodra De Samenkomst terugvolgt, zijn jullie vrienden en zie je wat wij delen.','As soon as De Samenkomst follows back you are friends and see what we share.']]},
  {id:'more',page:'profile',auth:1,ic:'user',target:['.onk-pf2-head',function(){return heading(/./)}],
   t:[['Jouw eigen plek','Your own place'],['In je profiel staan je reeks van dagen, je voortgang en badges, je bewaarde verzen, markeringen en notities.','Your profile holds your streak of days, your progress and badges, your saved verses, highlights and notes.']]},
- {id:'done',page:'profile',big:1,last:1,ic:'check',
+ {id:'done',page:null,big:1,last:1,ic:'check',
   t:[['Je bent klaar','You are all set'],['Begin met lezen, kies een leesplan of kijk bij de gemeenschap. Je kunt deze rondleiding opnieuw starten via Profiel.','Start reading, pick a reading plan or look around the community. You can restart this tour from your profile.']]}
 ];
 var N=S.length;
@@ -148,7 +153,6 @@ var CSS='\
 #otr .d{position:fixed;background:transparent;pointer-events:auto}\
 #otr .dimfull{position:fixed;inset:0;background:rgba(29,43,51,.62);pointer-events:auto}\
 #otr .ring{position:fixed;pointer-events:none;border-radius:var(--rad,18px);outline:3px solid #7db928;outline-offset:0;box-shadow:0 0 0 3px #fff,0 0 0 9999px rgba(29,43,51,.62);transition:top .28s,left .28s,width .28s,height .28s,border-radius .28s}\
-#otr .hole{position:fixed;pointer-events:auto;background:transparent}\
 #otr .card{position:fixed;left:50%;transform:translateX(-50%);width:min(400px,calc(100vw - 24px));background:#fff;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.28);pointer-events:auto;overflow:hidden;transition:top .28s,bottom .28s,opacity .2s}\
 #otr .seg{display:flex;gap:3px;padding:16px 56px 0 16px}\
 #otr .seg i{flex:1;height:5px;border-radius:3px;background:#eaeef0;overflow:hidden;position:relative}\
@@ -160,6 +164,7 @@ var CSS='\
 #otr h4{margin:0;font:700 19px/1.25 "DM Sans",Inter,system-ui,sans-serif;color:#1d2b33;text-wrap:balance}\
 #otr p{margin:6px 0 14px;font:400 14.5px/1.55 Inter,system-ui,sans-serif;color:#3C5E70}\
 #otr .row{display:flex;align-items:center;gap:8px}\
+#otr .hint{display:flex;align-items:center;gap:8px;margin:-4px 0 12px;padding:9px 12px;border-radius:12px;background:#e9f5d6;color:#3d6a0a;font:600 13.5px/1.3 Inter,system-ui,sans-serif}\
 #otr .x{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;border:0;background:#eaeef0;color:#3C5E70;cursor:pointer;display:grid;place-items:center;z-index:2}\
 #otr .x:hover{background:#dfe5e8}\
 #otr .skip{margin-right:auto;padding:10px 4px;color:#7d8c95;font:500 13.5px Inter,system-ui,sans-serif;background:none;border:0;cursor:pointer}\
@@ -178,17 +183,22 @@ var CSS='\
 @media (prefers-reduced-motion:reduce){#otr *{transition:none!important}}';
 
 /* ---------- toestand ---------- */
-var el=null,cur=-1,timer=0,tapOff=null,closing=false;
+var el=null,cur=-1,timer=0,closing=false;
 function ensureEl(){
   if(el)return el;
   var st=document.createElement('style');st.id='otr-css';st.textContent=CSS;document.head.appendChild(st);
   el=document.createElement('div');el.id='otr';el.setAttribute('role','dialog');el.setAttribute('aria-live','polite');document.body.appendChild(el);
   return el;
 }
+var phase=2,mis=0,okAtShow=false;
 function targetOf(s){
-  if(!s.target)return null;
-  if(s.multi){var out=[];s.target.forEach(function(t){var e=typeof t==='function'?t():q1(t);if(e&&vis(e))out.push(e)});return out.length?out:null}
-  return firstVis(s.target);
+  var list,multi;
+  if(s.try&&phase===1){list=s.try.target1||s.target;multi=false}
+  else if(phase===2&&s.target2){list=s.target2;multi=!!s.multi2}
+  else{list=s.target;multi=!!s.multi}
+  if(!list)return null;
+  if(multi){var out=[];list.forEach(function(t){var e=typeof t==='function'?t():q1(t);if(e&&vis(e))out.push(e)});return out.length?out:null}
+  return firstVis(list);
 }
 function rectOf(t){
   if(!t)return null;
@@ -210,24 +220,23 @@ function radiusOf(t){
 function build(){
   var s=S[cur],c=COL[cur%4];
   el.style.setProperty('--c',c);
-  el.innerHTML='<div class="dimfull" data-dim></div><div class="d" data-p="0"></div><div class="d" data-p="1"></div><div class="d" data-p="2"></div><div class="d" data-p="3"></div><div class="ring" data-ring></div><div class="hole" data-hole></div>'+cardHtml(s,c);
-  el.__built=cur;if(el.parentNode&&el.nextSibling)document.body.appendChild(el);bind();
+  el.innerHTML='<div class="dimfull" data-dim></div><div class="d" data-p="0"></div><div class="d" data-p="1"></div><div class="d" data-p="2"></div><div class="d" data-p="3"></div><div class="ring" data-ring></div>'+cardHtml(s,c);
+  el.__built=cur+':'+phase;if(el.parentNode&&el.nextSibling)document.body.appendChild(el);bind();
   var b=el.querySelector('[data-n],[data-e]');b&&b.focus&&b.focus({preventScroll:true});
 }
 function draw(){
   if(cur<0||!el)return;
-  if(el.__built!==cur)build();
+  if(el.__built!==cur+':'+phase)build();
   var s=S[cur],t=targetOf(s),r=rectOf(t),vw=innerWidth,vh=innerHeight;
-  var dim=el.querySelector('[data-dim]'),ring=el.querySelector('[data-ring]'),hole=el.querySelector('[data-hole]'),ps=el.querySelectorAll('[data-p]');
+  var dim=el.querySelector('[data-dim]'),ring=el.querySelector('[data-ring]'),ps=el.querySelectorAll('[data-p]');
   function pos(n,x,y,w,h){n.style.left=x+'px';n.style.top=y+'px';n.style.width=Math.max(0,w)+'px';n.style.height=Math.max(0,h)+'px'}
   if(!r){
-    dim.style.display='block';ring.style.display='none';hole.style.display='none';ps.forEach(function(n){n.style.display='none'});
+    dim.style.display='block';ring.style.display='none';ps.forEach(function(n){n.style.display='none'});
   }else{
     dim.style.display='none';ring.style.display='block';ps.forEach(function(n){n.style.display='block'});
     pos(ps[0],0,0,vw,r.y);pos(ps[1],0,r.y,r.x,r.h);pos(ps[2],r.x+r.w,r.y,vw-r.x-r.w,r.h);pos(ps[3],0,r.y+r.h,vw,vh-r.y-r.h);
     pos(ring,r.x,r.y,r.w,r.h);
     var rad=Math.min(radiusOf(t),Math.min(r.w,r.h)/2);ring.style.setProperty('--rad',rad+'px');
-    hole.style.display=s.tap?'none':'block';if(!s.tap)pos(hole,r.x,r.y,r.w,r.h);
   }
   var card=el.querySelector('.card');
   if(card){
@@ -238,7 +247,8 @@ function draw(){
   }
 }
 function cardHtml(s,c){
-  var i=cur,tt=L(s.t[0]),tx=L(s.t[1]),idx=COL.indexOf(c);
+  var i=cur,idx=COL.indexOf(c),tp=(phase===2&&s.t2)?s.t2:s.t,tt=L(tp[0]),tx=L(tp[1]);
+  var chip='',needTask=!!(s.try&&phase===1&&s.try.req);
   var st='--c:'+G+';--t:'+TINT[2]+';--dp:'+DEEP[2];
   if(s.last){
     return '<div class="card" style="'+st+'"><div class="lgband"><img src="'+logoSrc()+'" alt="De Bijbel Online"></div><div class="bd"><div class="big"><h4>'+tt+'</h4><p>'+tx+'</p></div>'+
@@ -251,8 +261,8 @@ function cardHtml(s,c){
   var sq=seq(),pos=sq.indexOf(s)+1,MAINN=sq.length,segs='';for(var k=1;k<=MAINN;k++){segs+='<i class="'+(k<=pos?'on':'')+'" style="--c:'+(k<pos?G:Y)+'"></i>'}
   return '<div class="card" style="'+st+'"><button class="x" data-later aria-label="'+(en()?'Stop the tour':'Stop de rondleiding')+'" title="'+(en()?'Stop the tour':'Stop de rondleiding')+'">'+svg('close',16)+'</button><div class="seg">'+segs+'</div><div class="bd">'+
     '<div class="top"><span class="tile">'+svg(s.ic,22)+'</span><div><div class="cnt">'+pos+' '+(en()?'of':'van')+' '+MAINN+'</div><h4>'+tt+'</h4></div></div>'+
-    '<p>'+tx+'</p>'+
-    '<div class="row"><button class="skip" data-skipstep>'+(en()?'Skip':'Overslaan')+'</button><button class="b s" data-b>'+(en()?'Back':'Terug')+'</button><button class="b" data-n>'+(en()?'Continue':'Ga door')+'</button></div></div></div>';
+    '<p>'+tx+'</p>'+(chip?'<div class="hint">'+svg('tap',18)+chip+'</div>':'')+
+    '<div class="row"><button class="skip" data-skipstep>'+(en()?'Skip':'Overslaan')+'</button><button class="b s" data-b>'+(en()?'Back':'Terug')+'</button>'+(needTask?'':'<button class="b" data-n>'+(en()?'Continue':'Ga door')+'</button>')+'</div></div></div>';
 }
 function bind(){
   var n=el.querySelector('[data-n]'),b=el.querySelector('[data-b]'),lt=el.querySelectorAll('[data-later]'),e=el.querySelectorAll('[data-e]');
@@ -264,7 +274,22 @@ function bind(){
 }
 
 /* ---------- vloeiend: opnieuw tekenen terwijl de stap actief is ---------- */
-function loop(){clearInterval(timer);timer=setInterval(function(){if(cur>=0)draw()},220)}
+function loop(){clearInterval(timer);timer=setInterval(tick,220)}
+function tick(){
+  if(cur<0||!el)return;
+  var s=S[cur];
+  if(s.try&&phase===1){
+    var d=false;try{d=s.try.done()}catch(e){}
+    if(d){
+      if(s.try.auto){phase=3;setTimeout(function(){if(S[cur]===s)next()},700);return}   /* taak gelukt: meteen door (bv. het boek is al geopend) */
+      phase=2;draw();return;
+    }
+  }
+  if(phase===3)return;
+  /* de gebruiker is zelf naar een andere pagina gegaan: deze stap is dan klaar */
+  if(okAtShow&&s.page&&!onPage(s.page)){if(++mis>=6){mis=0;next();return}}else mis=0;
+  draw();
+}
 function onResize(){if(cur>=0)draw()}
 
 /* ---------- navigatie tussen stappen ---------- */
@@ -284,7 +309,6 @@ function goTo(i,dir){
   var s=S[i],prev=S[cur];
   if(prev&&prev.close)prev.close();
   cur=-1;put({s:i,d:0,t:Date.now()});
-  if(tapOff){tapOff();tapOff=null}
   if(!onPage(s.page)){ /* andere pagina: volledig laden, de rondleiding hervat daar */
     if(P[s.page].nav){   /* binnen de app wisselen (geen herlaad) */
       var nk0=null;try{nk0=JSON.parse(sessionStorage.getItem('onk-tour-click')||'null')}catch(e){}
@@ -302,32 +326,23 @@ function goTo(i,dir){
 var LOG=[];window.__tourLog=LOG;var lastShow={i:-1,t:0};
 function show(i){
   LOG.push('show '+i+' @'+Date.now()%100000);
-  if(lastShow.i===i&&Date.now()-lastShow.t<1200&&el&&el.__built===i){LOG.push('  dup ignored');return}   /* nooit dezelfde stap twee keer vlak na elkaar */
+  if(lastShow.i===i&&Date.now()-lastShow.t<1200&&el&&el.__built&&String(el.__built).indexOf(i+':')===0){LOG.push('  dup ignored');return}
   lastShow={i:i,t:Date.now()};
-  ensureEl();cur=i;var s=S[i];
-  if(s.open)setTimeout(function(){if(cur===i)s.open(0)},700);
+  ensureEl();cur=i;mis=0;var s=S[i];okAtShow=onPage(s.page);
+  if(s.try&&s.try.base)s.try.__b=s.try.base();
+  var d0=false;if(s.try){try{d0=s.try.done()}catch(e){}}
+  phase=(s.try&&!d0)?1:2;
   waitTarget(s,function(t){
     if(cur!==i)return;
     if(t)scrollTo(t);
-    else if(s.optional&&!s.big){ /* geen doelwit (bv. geen leden): sla de stap over */ if(i<N-1){goTo(i+1);return}}
-    el.__built=-1;draw();loop();
-    if(s.tap&&t)armTap(s,t);
+    else if(s.optional&&!s.big){ if(i<N-1){goTo(i+1);return}}
+    el.__built='';draw();loop();
   });
 }
 function waitTarget(s,cb){
-  if(!s.target){cb(null);return}
-  var tries=0,max=s.open?28:30;
-  (function poll(){var t=targetOf(s);if(t||tries++>=max){cb(t);return}if(s.open&&tries%6===5)s.open(Math.floor(tries/6)+1);setTimeout(poll,250)})();
-}
-function armTap(s,t){
-  var node=Array.isArray(t)?t[0]:t;
-  function fn(e){
-    var te=s.tapEl&&s.tapEl();if(te)node=te;
-    if(!node.contains(e.target))return;
-    cleanup();lastTap=Date.now();setTimeout(function(){if(cur>=0&&S[cur]===s)next()},s.id==='verse'?700:450);
-  }
-  function cleanup(){document.removeEventListener('click',fn,true);tapOff=null}
-  document.addEventListener('click',fn,true);tapOff=cleanup;
+  if(!s.target&&!(s.try&&s.try.target1)){cb(null);return}
+  var tries=0,max=30;
+  (function poll(){var t=targetOf(s);if(t||tries++>=max){cb(t);return}setTimeout(poll,250)})();
 }
 function next(){goTo(cur+1,1)}
 function back(){
@@ -343,7 +358,7 @@ function finish(to){
 }
 function stop(){
   var cs=S[cur];if(cs&&cs.close)cs.close();
-  cur=-1;clearInterval(timer);if(tapOff){tapOff();tapOff=null}
+  cur=-1;clearInterval(timer)
   if(el){el.remove();el=null}
 }
 function start(){put({s:0,d:0,t:Date.now()});if(!onPage(S[0].page)){location.assign(pageUrl('home'));return}show(0)}
@@ -394,12 +409,6 @@ function boot(){
 }
 window.addEventListener('resize',onResize);
 window.addEventListener('scroll',function(){if(cur>=0)draw()},true);
-document.addEventListener('keydown',function(e){
-  if(cur<0)return;
-  if(e.key==='Escape'&&S[cur].id!=='sheet'){later()}
-  else if(e.key==='ArrowRight'){next()}
-  else if(e.key==='ArrowLeft'){back()}
-});
 window.OnkTour={start:start,stop:stop,state:get,view:function(i){show(i)},measure:function(){var c=el&&el.querySelector('.card'),g=el&&el.querySelector('[data-ring]');var a=c&&c.getBoundingClientRect(),b=g&&getComputedStyle(g).display!=='none'&&g.getBoundingClientRect();var inside=a&&a.left>=0&&a.top>=0&&a.right<=innerWidth&&a.bottom<=innerHeight;var ov=a&&b&&!(a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom);return {step:cur,vp:[innerWidth,innerHeight],card:a&&[Math.round(a.left),Math.round(a.top),Math.round(a.width),Math.round(a.height)],ring:b&&[Math.round(b.left),Math.round(b.top),Math.round(b.width),Math.round(b.height)],cardInside:!!inside,overlap:!!ov}},probe:function(i){var t=targetOf(S[i]);if(t)scrollTo(t);t=targetOf(S[i]);var r=rectOf(t);var e=Array.isArray(t)?t[0]:t;return {id:S[i].id,found:!!t,el:e?e.tagName+'.'+String(e.className).slice(0,40):null,rect:r&&[Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)],vp:[innerWidth,innerHeight]}}};
 if(document.readyState==='complete')boot();else window.addEventListener('load',boot);
 })();
