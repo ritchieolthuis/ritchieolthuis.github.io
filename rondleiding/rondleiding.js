@@ -53,6 +53,9 @@ function popupOf(re){   /* kleinste zwevende kader dat deze tekst bevat (niet on
 }
 function closeSettings(){if(popupOf(SET_RE)){var g=gearBtn();g&&g.click()}}
 function meerOpen(){return document.querySelector('.onk-mm.open')}
+var tabHit=false;
+document.addEventListener('click',function(e){if(cur>=0&&S[cur]&&S[cur].id==='tabs'&&e.target&&e.target.closest&&e.target.closest('nav.onk-tabbar,.onk-sidebar,aside'))setTimeout(function(){tabHit=true},50)},true);
+function closeTabsSheet(){try{document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',keyCode:27,bubbles:true}))}catch(e){}}
 function closeMeer(){var b=q1('.onk-meer');if(b&&meerOpen())b.click()}
 function samBtn(){   /* de + Vriend-knop van De Samenkomst (alleen als jullie nog geen vrienden zijn) */
   var out=null;roots().forEach(function(r){if(out)return;r.querySelectorAll('[data-follow]').forEach(function(b){
@@ -106,8 +109,9 @@ var S=[
   t:[['Verder lezen','Keep reading'],['Tik op Volgende om naar het volgende hoofdstuk te gaan.','Tap Next to go to the next chapter.']],
   try:{req:0,hint:['Tik op Volgende.','Tap Next.'],base:function(){return location.pathname+location.search},done:function(){return (location.pathname+location.search)!==S[cur].try.__b}},
   t2:[['Dat was het volgende hoofdstuk','That was the next chapter'],['Met Vorige ga je terug. Op de telefoon verbergt de ronde knop alles behalve de tekst, voor rustig lezen.','Previous takes you back. On a phone the round button hides everything except the text, for quiet reading.']]},
- {id:'tabs',page:null,ic:'grid',target:['nav.onk-tabbar','.onk-sidebar','nav[class*=side],aside'],
-  t:[['Zo kom je overal','This is how you get around'],['Home, Bijbel, Leesplannen, Gemeenschap en Meer. Onder Meer vind je je profiel, onderwerpen, artikelen en het evangelie.','Home, Bible, Plans, Community and More. Under More you find your profile, topics, articles and the gospel.']]},
+ {id:'tabs',page:null,ic:'grid',target:['nav.onk-tabbar','.onk-sidebar','nav[class*=side],aside'],close:closeTabsSheet,
+  t:[['Zo kom je overal','This is how you get around'],['Home, Bijbel, Leesplannen, Gemeenschap en Meer. Tik op één van de tabs om te kijken, één is genoeg.','Home, Bible, Plans, Community and More. Tap one of the tabs to take a look, one is enough.']],
+  try:{req:1,auto:1,done:function(){return tabHit}}},
  {id:'plans',page:'plans',auth:1,ic:'list',target:[function(){var b=byText('button,a',/^(Start|Starten)$/i);return b&&(b.closest('li,article,[class*=rounded-2xl],[class*=rounded-xl]')||b.parentElement)},function(){return heading(/^(Leesplannen|Reading plans)$/i)}],
   t:[['Lees met een plan','Read with a plan'],['Een leesplan geeft je elke dag een stukje. De cirkel vult zich vers voor vers terwijl je leest en je krijgt een badge als je klaar bent.','A reading plan gives you a little each day. The circle fills verse by verse as you read, and you earn a badge when you finish.']]},
  {id:'community',page:'comm',auth:1,ic:'users',target:['.tabs3','.yt','.chips2'],
@@ -330,6 +334,7 @@ function show(i){
   lastShow={i:i,t:Date.now()};
   ensureEl();cur=i;mis=0;var s=S[i];okAtShow=onPage(s.page);
   if(s.try&&s.try.base)s.try.__b=s.try.base();
+  if(s.id==='tabs')tabHit=false;
   var d0=false;if(s.try){try{d0=s.try.done()}catch(e){}}
   phase=(s.try&&!d0)?1:2;
   waitTarget(s,function(t){
@@ -353,7 +358,7 @@ function back(){
 function later(){var o=get();put({s:-1,d:2,t:Date.now()});stop()}
 function finish(to){
   put({s:-1,d:1,t:Date.now()});stop();
-  if(to==='read'){location.assign(pageUrl('read').split('?')[0])}
+  if(to==='read'){location.assign(en()?'/john/1/':'/johannes/1/')}
   else if(to==='plans'){location.assign(pageUrl('plans'))}
 }
 function stop(){
@@ -407,6 +412,20 @@ function boot(){
     },900);
   })();
 }
+/* Rij "Rondleiding" in Profiel: een kopie van een bestaande rij (zelfde stijl), zodat je de rondleiding opnieuw kunt starten. */
+function injectRestart(){
+  if(!/^\/(profiel|profile)\//.test(location.pathname)||document.getElementById('otr-restart'))return;
+  var src=null;document.querySelectorAll('a,button,div').forEach(function(e){if(src)return;var t=(e.textContent||'').trim();if(/^(Vind je kerk|Find a church)$/i.test(t)&&e.getBoundingClientRect().height>30&&e.getBoundingClientRect().height<110)src=e});
+  if(!src)return;
+  var row=src.closest('a,button')||src,c=row.cloneNode(true);c.id='otr-restart';c.removeAttribute('href');c.removeAttribute('target');c.setAttribute('role','button');c.style.cursor='pointer';
+  var walker=document.createTreeWalker(c,NodeFilter.SHOW_TEXT),n,done=false;
+  while(n=walker.nextNode()){if(/Vind je kerk|Find a church/i.test(n.nodeValue)){n.nodeValue=en()?'Tour':'Rondleiding';done=true}}
+  if(!done)return;
+  var ico=c.querySelector('svg');if(ico)ico.innerHTML=IC.hand.replace(/^/,'');
+  c.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();start()},true);
+  row.parentNode.insertBefore(c,row);
+}
+if(typeof MutationObserver!=='undefined'){var mt=0;new MutationObserver(function(){if(mt)return;mt=setTimeout(function(){mt=0;try{injectRestart()}catch(e){}},400)}).observe(document.body,{childList:true,subtree:true})}
 window.addEventListener('resize',onResize);
 window.addEventListener('scroll',function(){if(cur>=0)draw()},true);
 window.OnkTour={start:start,stop:stop,state:get,view:function(i){show(i)},measure:function(){var c=el&&el.querySelector('.card'),g=el&&el.querySelector('[data-ring]');var a=c&&c.getBoundingClientRect(),b=g&&getComputedStyle(g).display!=='none'&&g.getBoundingClientRect();var inside=a&&a.left>=0&&a.top>=0&&a.right<=innerWidth&&a.bottom<=innerHeight;var ov=a&&b&&!(a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom);return {step:cur,vp:[innerWidth,innerHeight],card:a&&[Math.round(a.left),Math.round(a.top),Math.round(a.width),Math.round(a.height)],ring:b&&[Math.round(b.left),Math.round(b.top),Math.round(b.width),Math.round(b.height)],cardInside:!!inside,overlap:!!ov}},probe:function(i){var t=targetOf(S[i]);if(t)scrollTo(t);t=targetOf(S[i]);var r=rectOf(t);var e=Array.isArray(t)?t[0]:t;return {id:S[i].id,found:!!t,el:e?e.tagName+'.'+String(e.className).slice(0,40):null,rect:r&&[Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)],vp:[innerWidth,innerHeight]}}};
