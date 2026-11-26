@@ -2372,9 +2372,15 @@ div[class*="overflow-x-auto"][class*="flex-1"] p[class~="mb-2"][class~="text-xs"
 div[class*="overflow-x-auto"][class*="flex-1"] h1{font-family:Inter,system-ui,sans-serif!important;font-size:clamp(2rem,3vw,2.6rem)!important;line-height:1.08!important;font-weight:800!important;letter-spacing:-.035em!important}
 
 /*onk-lees-heel-mobiel*/
-/* Op telefoon (staand, small) past de "Lees heel hoofdstuk" knop niet naast de h1 — verberg hem zodat hij niet overlapt. De SV-badge blijft zichtbaar. */
+/* Telefoon: "Heel hoofdstuk" blijft zichtbaar. Past hij niet naast de titel, dan staat hij op een eigen regel onder de titel (links), de SV-badge rechts. */
 @media (max-width:639px){
-  .onk-read-top button[class*="whitespace-nowrap"][class*="rounded-full"][class*="text-terracotta"]{display:none!important}
+  .onk-read-top h1{flex-wrap:wrap}
+  .onk-read-top h1>span.ml-auto:has(button){flex:0 0 100%;margin-left:0}
+  .onk-read-top h1>span.ml-auto:has(button)>*{width:100%;justify-content:space-between}
+}
+/* Vorige / Volgende: niet onder de ronde focusknop (telefoon) */
+@media (max-width:767px),(pointer:coarse){
+  html.onk-ftel-on .onk-nav>div{padding-right:58px}
 }
 
 /*onk-kop-vormen-definitief: alleen de vormen van de bestaande headerknoppen.*/
