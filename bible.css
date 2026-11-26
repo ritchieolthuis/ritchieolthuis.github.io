@@ -2381,6 +2381,7 @@ div[class*="overflow-x-auto"][class*="flex-1"] h1{font-family:Inter,system-ui,sa
 /* Vorige / Volgende: niet onder de ronde focusknop (telefoon) */
 @media (max-width:767px),(pointer:coarse){
   html.onk-ftel-on .onk-nav>div{padding-right:58px}
+  html.onk-ftel-on:not(.onk-focus-tel) .onk-nav{bottom:calc(var(--onk-ftb,80px) + 8px)!important}
 }
 
 /*onk-kop-vormen-definitief: alleen de vormen van de bestaande headerknoppen.*/
@@ -2456,3 +2457,7 @@ button.onk-glas-druk{scale:.9}
 .onk-tab.on .onk-sg-groen{background:#7db928;color:#fff}
 .onk-tab.on .onk-sg-donker{background:#3c5e70;color:#fff}
 .onk-tab .onk-sg-ic{transition:background .15s ease,color .15s ease}
+
+/*onk-nav-nooit-verborgen*/
+/* Vorige / Volgende mogen nooit door de ingangsanimatie (of een vastgehouden animatie) onzichtbaar blijven. */
+html.onk-anim .onk-nav-zone,html.onk-anim .onk-nav-zone *,html.onk-anim .onk-nav,html.onk-anim .onk-nav *{animation:none!important}
