@@ -194,11 +194,12 @@ function ensureEl(){
   el=document.createElement('div');el.id='otr';el.setAttribute('role','dialog');el.setAttribute('aria-live','polite');document.body.appendChild(el);
   return el;
 }
-var phase=2,mis=0,okAtShow=false;
+var phase=2,mis=0,okAtShow=false,alive2=true;
+function t2Alive(s){if(!s.target2)return true;var list=s.target2,multi=!!s.multi2,out=[];for(var i=0;i<list.length;i++){var e=typeof list[i]==='function'?list[i]():q1(list[i]);if(e&&vis(e)){out.push(e);if(!multi)return true}}return multi?out.length>0&&!!out[0]:false}
 function targetOf(s){
   var list,multi;
   if(s.try&&phase===1){list=s.try.target1||s.target;multi=false}
-  else if(phase===2&&s.target2){list=s.target2;multi=!!s.multi2}
+  else if(phase===2&&s.target2&&alive2){list=s.target2;multi=!!s.multi2}
   else{list=s.target;multi=!!s.multi}
   if(!list)return null;
   if(multi){var out=[];list.forEach(function(t){var e=typeof t==='function'?t():q1(t);if(e&&vis(e))out.push(e)});return out.length?out:null}
@@ -225,13 +226,18 @@ function build(){
   var s=S[cur],c=COL[cur%4];
   el.style.setProperty('--c',c);
   el.innerHTML='<div class="dimfull" data-dim></div><div class="d" data-p="0"></div><div class="d" data-p="1"></div><div class="d" data-p="2"></div><div class="d" data-p="3"></div><div class="ring" data-ring></div>'+cardHtml(s,c);
-  el.__built=cur+':'+phase;if(el.parentNode&&el.nextSibling)document.body.appendChild(el);bind();
+  el.__built=cur+':'+phase+':'+(alive2?1:0);if(el.parentNode&&el.nextSibling)document.body.appendChild(el);bind();
   var b=el.querySelector('[data-n],[data-e]');b&&b.focus&&b.focus({preventScroll:true});
 }
 function draw(){
   if(cur<0||!el)return;
-  if(el.__built!==cur+':'+phase)build();
-  var s=S[cur],t=targetOf(s),r=rectOf(t),vw=innerWidth,vh=innerHeight;
+  if(el.__built!==cur+':'+phase+':'+(alive2?1:0))build();
+  var s=S[cur],t=targetOf(s),vw=innerWidth,vh=innerHeight;
+  if(t){   /* staat het gemarkeerde deel buiten beeld (bv. na een nieuw hoofdstuk), scroll er dan één keer naartoe */
+    var k=cur+':'+phase+':'+(alive2?1:0),b0=Array.isArray(t)?t[0].getBoundingClientRect():t.getBoundingClientRect();
+    if((b0.top>vh-60||b0.bottom<60)&&el.__sc!==k){el.__sc=k;scrollTo(t);t=targetOf(s)}
+  }
+  var r=rectOf(t);
   var dim=el.querySelector('[data-dim]'),ring=el.querySelector('[data-ring]'),ps=el.querySelectorAll('[data-p]');
   function pos(n,x,y,w,h){n.style.left=x+'px';n.style.top=y+'px';n.style.width=Math.max(0,w)+'px';n.style.height=Math.max(0,h)+'px'}
   if(!r){
@@ -251,7 +257,7 @@ function draw(){
   }
 }
 function cardHtml(s,c){
-  var i=cur,idx=COL.indexOf(c),tp=(phase===2&&s.t2)?s.t2:s.t,tt=L(tp[0]),tx=L(tp[1]);
+  var i=cur,idx=COL.indexOf(c),tp=(phase===2&&s.t2&&(!s.target2||alive2))?s.t2:s.t,tt=L(tp[0]),tx=L(tp[1]);
   var chip='',needTask=!!(s.try&&phase===1&&s.try.req);
   var st='--c:'+G+';--t:'+TINT[2]+';--dp:'+DEEP[2];
   if(s.last){
@@ -286,10 +292,11 @@ function tick(){
     var d=false;try{d=s.try.done()}catch(e){}
     if(d){
       if(s.try.auto){phase=3;setTimeout(function(){if(S[cur]===s)next()},700);return}   /* taak gelukt: meteen door (bv. het boek is al geopend) */
-      phase=2;draw();return;
+      phase=2;alive2=true;draw();return;
     }
   }
   if(phase===3)return;
+  if(phase===2&&s.target2){var a=t2Alive(s);if(a!==alive2){alive2=a;draw();return}}
   /* de gebruiker is zelf naar een andere pagina gegaan: deze stap is dan klaar */
   if(okAtShow&&s.page&&!onPage(s.page)){if(++mis>=6){mis=0;next();return}}else mis=0;
   draw();
@@ -323,7 +330,7 @@ function goTo(i,dir){
     if(nk&&nk.i===i&&Date.now()-nk.t<30000){show(i);return}   /* al geprobeerd: nooit blijven herladen, toon de stap zonder doelwit */
     try{sessionStorage.setItem('onk-tour-nav',JSON.stringify({i:i,t:Date.now()}))}catch(e){}
     if(el)el.innerHTML='';
-    location.assign(pageUrl(s.page));return;
+    navByTour=true;location.assign(pageUrl(s.page));return;
   }
   show(i);
 }
@@ -336,7 +343,7 @@ function show(i){
   if(s.try&&s.try.base)s.try.__b=s.try.base();
   if(s.id==='tabs')tabHit=false;
   var d0=false;if(s.try){try{d0=s.try.done()}catch(e){}}
-  phase=(s.try&&!d0)?1:2;
+  phase=(s.try&&!d0)?1:2;alive2=true;
   waitTarget(s,function(t){
     if(cur!==i)return;
     if(t)scrollTo(t);
@@ -358,15 +365,15 @@ function back(){
 function later(){var o=get();put({s:-1,d:2,t:Date.now()});stop()}
 function finish(to){
   put({s:-1,d:1,t:Date.now()});stop();
-  if(to==='read'){location.assign(en()?'/john/1/':'/johannes/1/')}
-  else if(to==='plans'){location.assign(pageUrl('plans'))}
+  if(to==='read'){navByTour=true;location.assign(en()?'/john/1/':'/johannes/1/')}
+  else if(to==='plans'){navByTour=true;location.assign(pageUrl('plans'))}
 }
 function stop(){
   var cs=S[cur];if(cs&&cs.close)cs.close();
   cur=-1;clearInterval(timer)
   if(el){el.remove();el=null}
 }
-function start(){put({s:0,d:0,t:Date.now()});if(!onPage(S[0].page)){location.assign(pageUrl('home'));return}show(0)}
+function start(){put({s:0,d:0,t:Date.now()});if(!onPage(S[0].page)){navByTour=true;location.assign(pageUrl('home'));return}show(0)}
 
 /* ---------- wie krijgt de rondleiding automatisch? ---------- */
 var LAUNCH=Date.parse('2026-11-26T00:00:00+01:00');   /* alleen accounts die vanaf de lancering (26 nov 2026) zijn aangemaakt, plus alle toekomstige; de site-beheerder (is_admin) krijgt hem één keer om te testen */
@@ -426,6 +433,14 @@ function injectRestart(){
   row.parentNode.insertBefore(c,row);
 }
 if(typeof MutationObserver!=='undefined'){var mt=0;new MutationObserver(function(){if(mt)return;mt=setTimeout(function(){mt=0;try{injectRestart()}catch(e){}},400)}).observe(document.body,{childList:true,subtree:true})}
+/* Bescherming: tijdens de zoekstap blijft de gebruiker op de startpagina (Enter, de pijl en de suggesties openen anders de zoekpagina, en daar bestaat de rondleiding niet). */
+function inSearchStep(e){return cur>=0&&S[cur]&&S[cur].id==='search'}
+window.addEventListener('keydown',function(e){if(inSearchStep()&&e.key==='Enter'&&e.target&&e.target.matches&&e.target.matches('input')){e.preventDefault();e.stopImmediatePropagation()}},true);
+window.addEventListener('submit',function(e){if(inSearchStep()){e.preventDefault();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',function(e){if(inSearchStep()&&e.target&&e.target.closest&&e.target.closest('.onk-sugg,.onk-home-panel')&&!(e.target.matches&&e.target.matches('input'))){e.preventDefault();e.stopImmediatePropagation()}},true);
+/* Gaat de pagina weg door iets wat de gebruiker zelf aantikte (een tab, een link), dan gaat de rondleiding op de nieuwe pagina verder bij de volgende stap. */
+var navByTour=false;
+window.addEventListener('pagehide',function(){if(cur>=0&&!navByTour){put({s:Math.min(cur+1,N-1),d:0,t:Date.now()})}});
 window.addEventListener('resize',onResize);
 window.addEventListener('scroll',function(){if(cur>=0)draw()},true);
 window.OnkTour={start:start,stop:stop,state:get,view:function(i){show(i)},measure:function(){var c=el&&el.querySelector('.card'),g=el&&el.querySelector('[data-ring]');var a=c&&c.getBoundingClientRect(),b=g&&getComputedStyle(g).display!=='none'&&g.getBoundingClientRect();var inside=a&&a.left>=0&&a.top>=0&&a.right<=innerWidth&&a.bottom<=innerHeight;var ov=a&&b&&!(a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom);return {step:cur,vp:[innerWidth,innerHeight],card:a&&[Math.round(a.left),Math.round(a.top),Math.round(a.width),Math.round(a.height)],ring:b&&[Math.round(b.left),Math.round(b.top),Math.round(b.width),Math.round(b.height)],cardInside:!!inside,overlap:!!ov}},probe:function(i){var t=targetOf(S[i]);if(t)scrollTo(t);t=targetOf(S[i]);var r=rectOf(t);var e=Array.isArray(t)?t[0]:t;return {id:S[i].id,found:!!t,el:e?e.tagName+'.'+String(e.className).slice(0,40):null,rect:r&&[Math.round(r.x),Math.round(r.y),Math.round(r.w),Math.round(r.h)],vp:[innerWidth,innerHeight]}}};

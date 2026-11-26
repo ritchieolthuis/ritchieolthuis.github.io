@@ -4159,7 +4159,7 @@ done=1;var sc=document.createElement("script");var bs=document.querySelector('sc
 /*ONK-TOUR-START*/
 /* Rondleiding voor nieuwe leden: laadt rondleiding/rondleiding.js alleen als je ingelogd bent (bron en uitleg: De Samenkomst/Rondleiding-staging).
    Verander je rondleiding.js, verhoog dan TV hieronder (anders houdt Cloudflare het oude bestand 4 uur vast). */
-(function(){if(window.__onkTourL)return;window.__onkTourL=1;var TV="20261126c",t0=Date.now();
+(function(){if(window.__onkTourL)return;window.__onkTourL=1;var TV="20261126d",t0=Date.now();
 function signed(){try{return !!(localStorage.getItem("bible-auth-v1")||localStorage.getItem("sb-vodswfyhlwvhhkqewtap-auth-token"))}catch(e){return false}}
 function load(){var sc=document.createElement("script");sc.src=(window.__onkRoot||"/")+"rondleiding/rondleiding.js?v="+TV;document.head.appendChild(sc)}
 function go(){if(window.__onkTour)return true;if(signed()){load();return true}return false}
