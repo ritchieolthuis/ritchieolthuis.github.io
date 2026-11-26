@@ -2359,6 +2359,13 @@ input.w-12.text-center[inputmode="numeric"]{width:4.75rem!important;padding-left
   nav.onk-tabbar .onk-tab-ic svg{width:26px!important;height:26px!important}
 }
 
+/*onk-tabbalk-breed-scherm*/
+/* Op tablet en op een smal computervenster (600 px en breder) is de zwevende onderbalk een compacte pil in het midden, niet over de hele breedte. */
+@media (min-width:600px) and (max-width:900px),(pointer:coarse) and (min-width:600px){
+  html:not(.onk-focus-tel) nav.onk-tabbar{left:0!important;right:0!important;margin-left:auto!important;margin-right:auto!important;width:min(540px,calc(100% - 24px))!important}
+}
+
+
 /* Definitieve knopmaat: dezelfde header en werking, alleen iets dunner zoals het voorbeeld. */
 :root{--kh:clamp(36px,min(calc(34px + .8vw),calc(22px + 4vh)),52px)!important}
 

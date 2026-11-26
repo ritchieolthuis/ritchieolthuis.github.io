@@ -5,7 +5,7 @@
     'bible-hl-base': 1, 'bible-hl-pending': 1, 'bible-offline-highlights': 1, 'bible-settings-pending': 1, 'bible-highlights-v2': 1,
     'onk-designs': 1, 'onk-design-style': 1, 'onk-share-tokens': 1, 'onk-account-name': 1, 'onk-design-basket': 1, 'onk-design-resume': 1,
     'bible-resume-pos': 1, 'bible-recents': 1, 'bible-articles-seen': 1, 'bible-buddy-ignore': 1, 'bible-share-basket': 1,
-    'bible-custom-bg-local': 1, 'bible-last-read': 1, 'bible-parallel-second': 1, 'onk-streak-rows': 1, 'bible-shortcuts': 1, 'bible-saved-plans': 1, 'onk-tl-favs': 1, 'onk-tl-on': 1, 'bible-read-cover': 1
+    'bible-custom-bg-local': 1, 'bible-last-read': 1, 'bible-parallel-second': 1, 'onk-streak-rows': 1, 'bible-shortcuts': 1, 'bible-saved-plans': 1, 'onk-tl-favs': 1, 'onk-tl-on': 1, 'bible-read-cover': 1, 'onk-tour': 1
   };
   /* instellingen: ook de varianten met ::phone, ::tablet, ::desktop erachter */
   var SET = ['bible-fontsize', 'bible-linespacing', 'bible-verselayout', 'bible-readingwidth', 'bible-font', 'bible-theme', 'bible-bg-color', 'bible-parallel-colors', 'bible-version-themes', 'bible-text-color', 'bible-version-text-colors', 'bible-version-bg-colors', 'bible-display-name', 'bible-kanttekeningen', 'bible-red-letters', 'bible-highlight-all', 'bible-action-panel', 'bible-action-panel-parallel', 'bible-show-highlights', 'bible-infinite-scroll-v2', 'bible-reading-lines', 'bible-default-version'];
@@ -4156,6 +4156,16 @@ var EN_ALIAS={GEN:['genesis','gen','ge'],EXO:['exodus','exod','ex'],LEV:['leviti
 setInterval(function(){if(done||!(document.querySelector(".onk-read-top")||document.querySelector(".bible-verse-flow")||document.querySelector(".onk-bw")))return;
 done=1;var sc=document.createElement("script");var bs=document.querySelector('script[src*="bible.js"]'),tg=bs&&bs.src.match(/[?&]v=([A-Za-z0-9]+)/);sc.src=(window.__onkRoot||"/")+"boektijdlijn/boektijdlijn.js"+(tg?"?v="+tg[1]:"");document.head.appendChild(sc)},700)})();
 /*ONK-TL-END*/
+/*ONK-TOUR-START*/
+/* Rondleiding voor nieuwe leden: laadt rondleiding/rondleiding.js alleen als je ingelogd bent (bron en uitleg: De Samenkomst/Rondleiding-staging).
+   Verander je rondleiding.js, verhoog dan TV hieronder (anders houdt Cloudflare het oude bestand 4 uur vast). */
+(function(){if(window.__onkTourL)return;window.__onkTourL=1;var TV="20261126a",t0=Date.now();
+function signed(){try{return !!(localStorage.getItem("bible-auth-v1")||localStorage.getItem("sb-vodswfyhlwvhhkqewtap-auth-token"))}catch(e){return false}}
+function load(){var sc=document.createElement("script");sc.src=(window.__onkRoot||"/")+"rondleiding/rondleiding.js?v="+TV;document.head.appendChild(sc)}
+function go(){if(window.__onkTour)return true;if(signed()){load();return true}return false}
+function start(){if(go())return;var iv=setInterval(function(){if(go()||Date.now()-t0>6e5)clearInterval(iv)},2500)}
+if(document.readyState==="complete")setTimeout(start,1200);else window.addEventListener("load",function(){setTimeout(start,1200)})})();
+/*ONK-TOUR-END*/
 /*ONK-MEER-START*/
 (function(){
 if(window.__onkMeer)return;window.__onkMeer=1;

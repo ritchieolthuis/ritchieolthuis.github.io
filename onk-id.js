@@ -8,7 +8,7 @@
     'bible-hl-base': 1, 'bible-hl-pending': 1, 'bible-offline-highlights': 1, 'bible-settings-pending': 1, 'bible-highlights-v2': 1,
     'onk-designs': 1, 'onk-design-style': 1, 'onk-share-tokens': 1, 'onk-account-name': 1, 'onk-design-basket': 1, 'onk-design-resume': 1,
     'bible-resume-pos': 1, 'bible-recents': 1, 'bible-articles-seen': 1, 'bible-buddy-ignore': 1, 'bible-share-basket': 1,
-    'bible-custom-bg-local': 1, 'bible-last-read': 1, 'bible-parallel-second': 1, 'onk-streak-rows': 1, 'bible-shortcuts': 1, 'bible-saved-plans': 1, 'onk-tl-favs': 1, 'onk-tl-on': 1, 'bible-read-cover': 1
+    'bible-custom-bg-local': 1, 'bible-last-read': 1, 'bible-parallel-second': 1, 'onk-streak-rows': 1, 'bible-shortcuts': 1, 'bible-saved-plans': 1, 'onk-tl-favs': 1, 'onk-tl-on': 1, 'bible-read-cover': 1, 'onk-tour': 1
   };
   /* instellingen: ook de varianten met ::phone, ::tablet, ::desktop erachter */
   var SET = ['bible-fontsize', 'bible-linespacing', 'bible-verselayout', 'bible-readingwidth', 'bible-font', 'bible-theme', 'bible-bg-color', 'bible-parallel-colors', 'bible-version-themes', 'bible-text-color', 'bible-version-text-colors', 'bible-version-bg-colors', 'bible-display-name', 'bible-kanttekeningen', 'bible-red-letters', 'bible-highlight-all', 'bible-action-panel', 'bible-action-panel-parallel', 'bible-show-highlights', 'bible-infinite-scroll-v2', 'bible-reading-lines', 'bible-default-version'];
