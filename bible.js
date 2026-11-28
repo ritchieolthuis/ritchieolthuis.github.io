@@ -4399,11 +4399,13 @@ setInterval(ensure,400);ensure();
     var B=Math.round(bt+nav.offsetHeight+10);if(B>20&&B<260)H.style.setProperty('--onk-pijl-b',B+'px');
   }
   window.addEventListener('resize',function(){place()});window.addEventListener('orientationchange',function(){setTimeout(place,200)});
-  function scrolling(){
+  function scrolling(t){
     if(!H.classList.contains('onk-lees-pijlen'))return;
+    /* onderaan het hoofdstuk blijven pijlen en onderbalk gewoon staan, ook als je nog scrolt (geen wachten op stilstand) */
+    try{var sc=(t&&t.nodeType===1)?t:(document.scrollingElement||document.documentElement);if(sc&&sc.scrollHeight>sc.clientHeight+40&&sc.scrollTop+sc.clientHeight>=sc.scrollHeight-8){clearTimeout(timer);H.classList.remove('onk-scrolling');return}}catch(e){}
     H.classList.add('onk-scrolling');clearTimeout(timer);timer=setTimeout(function(){H.classList.remove('onk-scrolling');refresh()},260);
   }
-  document.addEventListener('scroll',function(e){var t=e.target;if(t===document||t===document.documentElement||(t&&t.classList&&t.classList.contains('onk-read-top'))||(t&&t.contains&&t.nodeType===1&&t.contains(document.querySelector('.onk-nav'))))scrolling()},true);
+  document.addEventListener('scroll',function(e){var t=e.target;if(t===document||t===document.documentElement||(t&&t.classList&&t.classList.contains('onk-read-top'))||(t&&t.contains&&t.nodeType===1&&t.contains(document.querySelector('.onk-nav'))))scrolling(t)},true);
   window.addEventListener('wheel',function(){scrolling()},{passive:true});
   setInterval(refresh,400);refresh();
 }catch(err){}})();
