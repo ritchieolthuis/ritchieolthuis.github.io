@@ -237,7 +237,7 @@ img.rounded-full{object-fit:cover}
 .onk-plan-hero img{display:block;width:100%;height:100%;object-fit:cover}
 @media (min-width:640px){.onk-plan-hero{height:260px}.onk-plan-photo{width:96px;height:96px}}
 .onk-tabbar,.onk-more,.onk-more-bg{display:none}
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
   .onk-hdr-nav{display:none!important}
   .onk-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:38;display:flex;background:#fff;border-top:1px solid rgba(29,43,51,.1);padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.06)}
   .onk-tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;padding:6px 0 2px;font:500 11px/1.2 Inter,system-ui,sans-serif;color:#9aa7af;cursor:pointer;white-space:nowrap}
@@ -873,10 +873,10 @@ html.onk-leesplan button.bible-logo-left{display:flex!important}
 html.onk-leesplan .bible-logo-spacer{display:block!important}
 /*onk-leesknop-terugpijl-weg*/
 /* Op de leespagina op telefoon staat geen losse terugpijl links in de kop (de logo-knop blijft op de overige pagina's). */
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){html:not(.onk-home) button[aria-label="Home, Vers van de Dag"]{display:none!important}}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){html:not(.onk-home) button[aria-label="Home, Vers van de Dag"]{display:none!important}}
 /*onk-telefoon-onderbalk*/
 /* Op een telefoon (ook Safari in desktopweergave en de app op het beginscherm): geen zijbalk, alleen de onderbalk. */
-@media (pointer:coarse) and (max-width:1199px),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse) and (max-width:1199px),(pointer:fine) and (max-width:479px){
   html.onk-has-side .fixed.inset-0{left:0!important}
   .onk-tabbar{display:flex!important;position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;height:auto!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;gap:0!important;padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px))!important;background:#fff!important;border-top:1px solid rgba(29,43,51,.1)!important;border-right:0!important;box-shadow:0 -4px 18px rgba(0,0,0,.06)!important;z-index:38!important}
   .onk-tabbar::before,.onk-tabbar::after,.onk-side-toggle,.onk-side-foot{display:none!important;content:none!important}
@@ -994,7 +994,7 @@ div.min-h-full.bg-paper\/30 main h2.odz-title{font-size:22px;font-weight:700;let
 
 /*onk-community-rail*/
 /* De hoofdbalk op de tijdlijn alleen op computers. Op telefoon en touch-apparaten niet (community heeft daar een eigen onderbalk). */
-@media (max-width:767px),(pointer:coarse),(pointer:fine) and (max-width:900px){nav.onk-rail-tijd{display:none!important}}
+@media (max-width:767px),(pointer:coarse),(pointer:fine) and (max-width:479px){nav.onk-rail-tijd{display:none!important}}
 
 /* Met de hoofdbalk erbij is er minder ruimte: de rechter kolom Kanalen (staat ook links) pas tonen vanaf brede schermen. */
 @media (min-width:768px) and (max-width:1279px){html.onk-has-side.onk-tijd div.min-h-full.bg-paper\/30 aside.lg\:block{display:none!important}}
@@ -1199,7 +1199,7 @@ html.onk-dark div.relative.z-10.flex:has(> .library-scroll){background-color:var
 
 /*onk-logo-aanraking*/
 /* Op telefoon en tablet (aanraking) staat het Bijbel-logo linksboven op de tijdlijn (community) en op het leesplan, zodat je terug kunt naar het beginscherm. Op de Bijbel zelf niet (neemt te veel ruimte). */
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
   html.onk-tijd button.bible-logo-left[aria-label],html.onk-leesplan button.bible-logo-left[aria-label]{display:flex!important}
   html.onk-tijd .bible-logo-spacer,html.onk-leesplan .bible-logo-spacer{display:block!important}
 }
@@ -1628,14 +1628,13 @@ html.onk-sel-done .bible-verse-flow ::selection,html.onk-sel-done .bible-verse-f
 .onk-ftel{display:none;position:fixed;right:12px;bottom:var(--onk-ftb,80px);z-index:30;width:44px;height:44px;padding:0;border-radius:9999px;place-items:center;background:var(--surface,#fff);color:var(--ink-soft,#3C5E70);border:1px solid rgba(29,43,51,.15);box-shadow:0 8px 30px rgba(0,0,0,.16);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html.onk-ftel-on .onk-ftel{display:grid}
 html.onk-focus-tel .onk-ftel{bottom:calc(env(safe-area-inset-bottom,0px) + 20px)}
-html.onk-focus-tel nav.onk-tabbar{display:none!important}
 html.onk-focus-tel div.relative.z-10.flex:has(> .library-scroll){display:none!important}
 html.onk-focus-tel .onk-read-top{padding-top:calc(env(safe-area-inset-top,0px) + 1.25rem)!important}
 html.onk-focus-tel.onk-has-side .fixed.inset-0,html.onk-focus-tel.onk-side-right.onk-has-side .fixed.inset-0,html.onk-focus-tel.onk-side-closed .fixed.inset-0{left:0!important;right:0!important}
 html.onk-focus-tel div.fixed.inset-x-0.top-0.z-20[aria-hidden="true"]{background:var(--paper,#f4f6f7)!important}
 html.onk-focus-tel,html.onk-focus-tel body{background-color:var(--paper,#f4f6f7)!important}
 /* Focusknop telefoon: onderaan het hoofdstuk staat "Vorige / Volgende" boven de onderbalk; extra ruimte onder de tekst zodat de ronde knop er nooit overheen valt. Zelfde lezer op elke leespagina (hoofdstuk, leesplan). */
-html.onk-ftel-on:not(.onk-focus-tel) .onk-read-top{padding-bottom:140px!important}
+html.onk-ftel-on .onk-read-top{padding-bottom:140px!important}
 
 /*onk-animaties*/
 /* Animaties van de Animatie-mockup, alleen telefoon (class onk-anim op <html>, gezet door de IIFE onk-animaties in bible.js:
@@ -1687,7 +1686,6 @@ html.onk-anim .animate-pulse{animation:onkAShimmer 1.2s linear infinite;backgrou
 /* focusmodus in de lezer: kop en balk schuiven weg i.p.v. direct verdwijnen, knop-icoon springt */
 html.onk-anim:not(.onk-has-side) nav.onk-tabbar{transition:transform .5s var(--onk-smooth)}
 html.onk-anim.onk-has-side .onk-ind{display:none}
-html.onk-anim:not(.onk-has-side).onk-focus-tel nav.onk-tabbar{display:flex!important;transform:translateY(115%);pointer-events:none}
 html.onk-anim div.relative.z-10.flex:has(> .library-scroll){max-height:140px;transition:max-height .5s var(--onk-smooth),opacity .35s ease}
 html.onk-anim.onk-focus-tel div.relative.z-10.flex:has(> .library-scroll){display:flex!important;max-height:0;opacity:0;overflow:hidden;pointer-events:none}
 html.onk-anim .onk-ftel svg{animation:onkAIconPop .5s var(--onk-spring)}
@@ -1887,11 +1885,11 @@ html.onk-setwait .onk-read-top{visibility:hidden}
 .onk-pk{max-height:calc(100vh - 6rem)!important;max-height:calc(100dvh - 6rem)!important}
 .onk-pk-books,.onk-pk-pane{overflow-y:auto!important;min-height:0}
 /*onk-taal-naast-flip*/
-@media (min-width:1024px){html.onk-has-side:not(.onk-side-closed) nav.onk-tabbar>button.onk-side-foot{right:56px}}
+html.onk-has-side:not(.onk-side-closed) nav.onk-tabbar>button.onk-side-foot{right:56px}
 /*onk-tabbar-vorm*/
 /* Onderbalk (Home, Bijbel, Leesplan, Gemeenschap, Meer) als zwevende afgeronde balk, zoals de voorbeeldfoto. Alleen vorm; kleuren blijven gelijk. Telefoon, tablet en liggend (pointer:coarse of smal scherm). Computer met muis blijft de zijbalk. */
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
-  html:not(.onk-focus-tel) .onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important;padding:8px 6px!important;overflow:hidden}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  html .onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important;padding:8px 6px!important;overflow:hidden}
   .onk-tabbar .onk-tab{padding:6px 0 4px!important}
   .onk-tabbar .onk-tab-ic svg{width:26px!important;height:26px!important}
   .onk-more{bottom:calc(94px + env(safe-area-inset-bottom,0px))!important;border-radius:22px!important}
@@ -1904,7 +1902,7 @@ html.onk-setwait .onk-read-top{visibility:hidden}
 
 /*onk-ftel-onder-instellingen*/html:has(button[aria-label="Leesinstellingen"][aria-pressed="true"]) .onk-ftel,html:has(button[aria-label="Reading settings"][aria-pressed="true"]) .onk-ftel{display:none!important}
 
-/*onk-tabbar-onder-instellingen*/@media (pointer:coarse),(pointer:fine) and (max-width:900px){html:has(button[aria-label="Leesinstellingen"][aria-pressed="true"]) nav.onk-tabbar,html:has(button[aria-label="Reading settings"][aria-pressed="true"]) nav.onk-tabbar{display:none!important}}
+/*onk-tabbar-onder-instellingen*/@media (pointer:coarse),(pointer:fine) and (max-width:479px){html:has(button[aria-label="Leesinstellingen"][aria-pressed="true"]) nav.onk-tabbar,html:has(button[aria-label="Reading settings"][aria-pressed="true"]) nav.onk-tabbar{display:none!important}}
 
 /*onk-pf2-tabs-telefoon*/@media (max-width:767px){.onk-pf2-tabs{gap:20px}.onk-pf2-tabs button{font-size:16px}}
 
@@ -2171,7 +2169,7 @@ div.relative.z-10.flex:has(> .library-scroll)>button.onk-meer:hover,div.relative
 
 /*onk-kiezer-halfscherm*/
 /* Boek- en hoofdstukkiezer: tussen 768 en ongeveer 1100 px ging hij over het hele scherm en verdween zijn linkerkant achter de zijbalk. Nu staat hij ook daar rechts, naast de zijbalk (zelfde regels als op groot scherm). */
-@media (min-width:768px){
+@media (min-width:480px){
   html.onk-has-side .onk-pk{position:fixed!important;top:68px!important;right:24px!important;left:auto!important;bottom:auto!important;width:min(44rem,calc(100vw - 232px - 48px))!important;max-height:calc(100vh - 100px)!important;transform:none!important}
   html.onk-has-side.onk-side-closed .onk-pk{width:min(44rem,calc(100vw - 72px - 48px))!important}
   html.onk-side-right.onk-has-side .onk-pk{right:256px!important}
@@ -2290,7 +2288,7 @@ input.w-12.text-center[inputmode="numeric"]{width:4.75rem!important;padding-left
 
 /*onk-tabbalk-labels*/
 /* telefoon: tabs even breed (pictogrammen gelijk verdeeld); een tab wordt alleen breder als zijn label niet past (Leesplannen, Gemeenschap), zodat labels nooit in elkaar lopen. Op smalle schermen is het label 10px. */
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){nav.onk-tabbar .onk-tab{flex:1 1 0!important;min-width:max-content!important;padding-left:4px!important;padding-right:4px!important}}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){nav.onk-tabbar .onk-tab{flex:1 1 0!important;min-width:max-content!important;padding-left:4px!important;padding-right:4px!important}}
 @media (max-width:430px){nav.onk-tabbar .onk-tab>span:last-child{font-size:10px!important;letter-spacing:0!important}}
 
 /*onk-meer-profielfoto*/
@@ -2345,7 +2343,7 @@ input.w-12.text-center[inputmode="numeric"]{width:4.75rem!important;padding-left
 /*onk-computer-telefoonbreedte*/
 /* Een computerraam op telefoonbreedte gebruikt exact de bestaande telefoon-onderbalk.
    Boven deze grens blijft de computerzijbalk volledig ongewijzigd. */
-@media (pointer:fine) and (max-width:900px){
+@media (pointer:fine) and (max-width:479px){
   html.onk-has-side .fixed.inset-0,
   html.onk-side-right.onk-has-side .fixed.inset-0,
   html.onk-side-right.onk-has-side.onk-side-closed .fixed.inset-0{left:0!important;right:0!important}
@@ -2354,15 +2352,15 @@ input.w-12.text-center[inputmode="numeric"]{width:4.75rem!important;padding-left
   html.onk-side-right nav.onk-tabbar{display:flex!important;position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;height:auto!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;gap:0!important;padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px))!important;background:#fff!important;border-top:1px solid rgba(29,43,51,.1)!important;border-right:0!important;border-left:0!important;box-shadow:0 -4px 18px rgba(29,43,51,.06)!important;z-index:38!important}
   nav.onk-tabbar .onk-tab{flex:1 1 0!important;width:auto!important;min-width:0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;padding:6px 0 2px!important;background:none!important;border-radius:0!important;margin:0!important}
   nav.onk-tabbar .onk-tab>span:last-child{display:block!important;font-size:11px!important;line-height:1.2!important;font-weight:500!important;white-space:nowrap!important}
-  html:not(.onk-focus-tel) nav.onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(29,43,51,.12)!important;padding:8px 6px!important;overflow:hidden}
+  html nav.onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(29,43,51,.12)!important;padding:8px 6px!important;overflow:hidden}
   nav.onk-tabbar .onk-tab{padding:6px 0 4px!important}
   nav.onk-tabbar .onk-tab-ic svg{width:26px!important;height:26px!important}
 }
 
 /*onk-tabbalk-breed-scherm*/
 /* Op tablet en op een smal computervenster (600 px en breder) is de zwevende onderbalk een compacte pil in het midden, niet over de hele breedte. */
-@media (min-width:600px) and (max-width:900px),(pointer:coarse) and (min-width:600px){
-  html:not(.onk-focus-tel) nav.onk-tabbar{left:0!important;right:0!important;margin-left:auto!important;margin-right:auto!important;width:min(540px,calc(100% - 24px))!important}
+@media (pointer:coarse) and (min-width:600px){
+  html nav.onk-tabbar{left:0!important;right:0!important;margin-left:auto!important;margin-right:auto!important;width:min(540px,calc(100% - 24px))!important}
 }
 
 
@@ -2387,8 +2385,7 @@ div[class*="overflow-x-auto"][class*="flex-1"] h1{font-family:Inter,system-ui,sa
 }
 /* Vorige / Volgende: niet onder de ronde focusknop (telefoon) */
 @media (max-width:767px),(pointer:coarse){
-  html.onk-ftel-on .onk-nav>div{padding-right:58px}
-  html.onk-ftel-on:not(.onk-focus-tel) .onk-nav{bottom:calc(var(--onk-ftb,80px) + 8px)!important}
+  html.onk-ftel-on .onk-nav{bottom:calc(var(--onk-pijl-b,var(--onk-ftb,80px)) + 52px)!important}
 }
 
 /*onk-kop-vormen-definitief: alleen de vormen van de bestaande headerknoppen.*/
@@ -2468,3 +2465,187 @@ button.onk-glas-druk{scale:.9}
 /*onk-nav-nooit-verborgen*/
 /* Vorige / Volgende mogen nooit door de ingangsanimatie (of een vastgehouden animatie) onzichtbaar blijven. */
 html.onk-anim .onk-nav-zone,html.onk-anim .onk-nav-zone *,html.onk-anim .onk-nav,html.onk-anim .onk-nav *{animation:none!important}
+
+/*onk-kiezer-alle-schalen*/
+/* Kiezer (boek, hoofdstuk, vers): overal waar de tabbalk onderaan staat (telefoon, tablet, computer tot 900 px) stopt hij erboven, nooit eronder. Heel smalle schermen: kopjes worden afgekort in plaats van de kolom af te snijden. */
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  .onk-pk{bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
+}
+.onk-pk-bh{overflow:hidden;text-overflow:ellipsis}
+.onk-pk-books{min-width:0;overflow-x:hidden}
+
+/*onk-kiezer-stappen-telefoon*/
+/* Smal (tot 700 px, telefoon en smal computervenster, met of zonder zijbalk): de kiezer is een rij stappen in plaats van twee smalle kolommen: eerst alle boeken (volle breedte), na een tik de hoofdstukken met titels (volle breedte, knop terug naar Boeken), dan het vers. Computer en tablet houden de twee kolommen. */
+.onk-pk-back-ph{display:none}
+@media (max-width:767px){
+  html:not(.onk-has-side) .onk-pk-books{width:100%!important;max-width:none!important;border-right:0!important;padding:10px 12px 14px!important}
+  html:not(.onk-has-side) .onk-pk:not(.onk-pk-sel) .onk-pk-pane:not(:has(.onk-pk-grid)){display:none!important}
+  html:not(.onk-has-side) .onk-pk.onk-pk-sel .onk-pk-books{display:none!important}
+  html:not(.onk-has-side) .onk-pk.onk-pk-sel .onk-pk-pane{width:100%!important;padding:10px 12px 14px!important}
+  html:not(.onk-has-side) .onk-pk-back-ph{display:inline-flex}
+  html:not(.onk-has-side) .onk-pk-bh{padding:12px 10px 6px;font-size:12px}
+  html:not(.onk-has-side) .onk-pk-book{height:48px;line-height:48px;padding:0 12px;font-size:17px}
+  html:not(.onk-has-side) .onk-pk-star{width:44px;height:44px}
+  html:not(.onk-has-side) .onk-pk-h{padding:2px 10px 12px;font-size:22px}
+  html:not(.onk-has-side) .onk-pk-row{gap:16px;padding:6px 10px 6px 8px}
+  html:not(.onk-has-side) .onk-pk-n{width:44px;min-width:44px;height:44px;font-size:16px}
+  html:not(.onk-has-side) .onk-pk-t{font-size:16px}
+  html:not(.onk-has-side) .onk-pk-grid{grid-template-columns:repeat(auto-fill,minmax(52px,1fr))}
+  html:not(.onk-has-side) .onk-pk-ch{height:48px}
+}
+/* Computer (zijbalk aanwezig): altijd twee kolommen, nooit de stappen van telefoon en tablet. Boeken onder elkaar in een kolom (Oude Testament dan Nieuwe), zodat geen naam wordt afgekapt; de kiezer wordt zo nodig breder en valt over de zijbalk heen. */
+html.onk-has-side .onk-pk-books{display:block!important;grid-template-columns:1fr!important;width:38%!important;min-width:210px!important}
+html.onk-has-side .onk-pk-books>div{width:100%}
+html.onk-has-side .onk-pk-pane[class*="w-[60%]"]{width:62%!important}
+html.onk-has-side .onk-pk-bh{white-space:nowrap;overflow:visible;text-overflow:clip}
+html.onk-has-side .onk-pk-book{font-size:15px;line-height:40px}
+
+/*onk-tabbalk-indicator*/
+/* Het streepje onder het actieve tabblad hoort nooit in de rij mee te tellen (op tablet en brede schermen nam het 105 px ruimte in en stonden de tabs niet verdeeld) en bestaat alleen waar de balk onderaan staat. */
+nav.onk-tabbar .onk-ind{position:absolute;top:-1px;left:0;height:2px;pointer-events:none}
+html:not(.onk-anim) nav.onk-tabbar .onk-ind,html.onk-has-side nav.onk-tabbar .onk-ind{display:none!important}
+
+/*onk-kiezer-over-zijbalk*/
+/* Regel: alles wat opengeklapt wordt door erop te klikken (kiezer, menu's, panelen) valt OVER de zijbalk heen, nooit ernaast samengeperst. Is er naast de zijbalk te weinig ruimte voor de volle breedte (44rem), dan beslaat de kiezer het hele venster (8 px marge) en ligt hij boven de zijbalk, open of dicht, links of rechts. */
+@media (min-width:480px) and (max-width:983px){
+  html.onk-has-side:not(.onk-side-closed) .onk-pk,html.onk-side-right.onk-has-side:not(.onk-side-closed) .onk-pk{left:8px!important;right:8px!important;width:auto!important;max-width:none!important}
+}
+@media (min-width:480px) and (max-width:823px){
+  html.onk-has-side.onk-side-closed .onk-pk,html.onk-side-right.onk-has-side.onk-side-closed .onk-pk{left:8px!important;right:8px!important;width:auto!important;max-width:none!important}
+}
+
+/*onk-kiezer-boven-zijbalk*/
+/* De kop (met de kiezer erin) vormt een eigen laag onder de zijbalk (z 10 tegen 38), daardoor viel de kiezer niet over een zijbalk links heen. Staat de kiezer open, dan ligt de hele kop boven de zijbalk, en een tik naast de kiezer (ook op de zijbalk) klapt hem weer in. */
+html:has(.onk-pk) div.relative.z-10.flex:has(> .library-scroll){z-index:60!important}
+html:has(.onk-pk) .fixed.inset-0.z-30{left:0!important;right:0!important}
+
+/*onk-leesplan-kolommen-container*/
+/* Leesplan-lijsten: het aantal kolommen hangt van de ruimte van de pagina zelf af (niet van de venster-breedte), want de zijbalk neemt 72 of 232 px weg. Past er geen tweede kolom van minstens 22rem naast, dan staat alles onder elkaar en wordt niets afgesneden. */
+.onk-lp-actlist,.onk-lp-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))!important}
+.onk-lp-actlist>li,.onk-lp-grid>li,.onk-lp-grid>.onk-lp-row,.onk-lp-actlist>*{min-width:0}
+
+/*onk-pijlen-alle-breedtes*/
+/* Computer: de ronde pijlen links en rechts (vorig / volgend hoofdstuk) blijven op elke breedte met zijbalk (vanaf 480 px) en in focusmodus. Ze schalen mee (32 tot 44 px) en de tekstkolom houdt zo nodig extra ruimte vrij, zodat pijl en tekst elkaar nooit raken. Telefoon en tablet (aanraking, geen zijbalk) hebben ze niet. */
+html.onk-has-side,html.onk-focus,html.onk-focus-kop{--onk-arr:clamp(32px,4.4vw,44px);--onk-res:calc(var(--onk-arr) + 24px);--onk-sbw:232px}
+html.onk-has-side.onk-side-closed{--onk-sbw:72px}
+html.onk-focus,html.onk-focus-kop{--onk-sbw:0px}
+@media (min-width:480px){
+  html.onk-has-side button.fixed.top-1\/2.left-4,html.onk-has-side button.fixed.top-1\/2.right-4,html.onk-focus button.fixed.top-1\/2.left-4,html.onk-focus button.fixed.top-1\/2.right-4,html.onk-focus-kop button.fixed.top-1\/2.left-4,html.onk-focus-kop button.fixed.top-1\/2.right-4{display:flex!important;width:var(--onk-arr)!important;height:var(--onk-arr)!important}
+  html.onk-has-side .onk-read-top>.mx-auto:not(:has(.grid.grid-flow-col.auto-cols-fr)),html.onk-focus .onk-read-top>.mx-auto:not(:has(.grid.grid-flow-col.auto-cols-fr)),html.onk-focus-kop .onk-read-top>.mx-auto:not(:has(.grid.grid-flow-col.auto-cols-fr)){
+    padding-left:max(clamp(16px,4vw,40px),calc(var(--onk-res) - max(0px,(100vw - var(--onk-sbw) - 760px)/2)))!important;
+    padding-right:max(clamp(16px,4vw,40px),calc(var(--onk-res) - max(0px,(100vw - var(--onk-sbw) - 760px)/2)))!important}
+}
+@media (min-width:480px){
+  html.onk-has-side:not(.onk-side-right) button.fixed.top-1\/2.left-4{left:calc(var(--onk-sbw) + 16px)!important}
+  html.onk-has-side.onk-side-right button.fixed.top-1\/2.left-4{left:16px!important}
+  html.onk-has-side.onk-side-right button.fixed.top-1\/2.right-4{left:auto!important;right:calc(var(--onk-sbw) + 16px)!important}
+  html.onk-has-side:not(.onk-side-right) button.fixed.top-1\/2.right-4{left:auto!important;right:16px!important}
+}
+
+/*onk-kanttek-knop-rond*/
+/* Kanttekeningen-knop in de leeskop: in de nieuwe kopstijl (ronde knoppen, maat --kh) paste het woord KANTTEK. niet en werd afgekapt. Nu altijd alleen het boekje, rond, zelfde maat en kleur als de andere ronde knoppen; actief = wit gevuld. */
+div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Kanttekeningen"],div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Marginal notes"]{flex:0 0 var(--kh)!important;width:var(--kh)!important;min-width:var(--kh)!important;max-width:var(--kh)!important;height:var(--kh)!important;min-height:var(--kh)!important;padding:0!important;gap:0!important;justify-content:center!important;border-radius:999px!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.28)!important;color:#fff!important}
+div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Kanttekeningen"]>span,div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Marginal notes"]>span{display:none!important}
+div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Kanttekeningen"] svg,div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Marginal notes"] svg{width:calc(var(--kh)*.42)!important;height:calc(var(--kh)*.42)!important}
+div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Kanttekeningen"][aria-pressed="true"],div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button[aria-label^="Marginal notes"][aria-pressed="true"]{background:#fff!important;color:#3C5E70!important}
+
+/*onk-pijlen-telefoon*/
+/* Telefoon en tablet: ronde pijlen vorig / volgend hoofdstuk, alleen zichtbaar als je niet scrolt (zoals YouVersion); bij scrollen verdwijnen ze en schuift de onderbalk weg. Gemaakt door het blok ONK-PIJLEN-TEL in bible.js; computer heeft zijn eigen pijlen. */
+.onk-pijl{display:none}
+html.onk-lees-pijlen .onk-pijl{display:grid;position:fixed;bottom:var(--onk-pijl-b,var(--onk-ftb,80px));z-index:36;width:44px;height:44px;padding:0;place-items:center;border-radius:14px;background:var(--surface,#fff);color:var(--ink-soft,#3C5E70);border:1px solid rgba(29,43,51,.1);box-shadow:0 4px 14px rgba(0,0,0,.14);opacity:1;transform:translateY(0);transition:opacity .35s cubic-bezier(.4,0,.2,1),transform .35s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent}
+html.onk-lees-pijlen .onk-pijl-l{left:max(12px,env(safe-area-inset-left,0px))}
+html.onk-lees-pijlen .onk-pijl-r{right:max(12px,env(safe-area-inset-right,0px))}
+html.onk-lees-pijlen.onk-scrolling .onk-pijl{opacity:0;transform:translateY(160px);pointer-events:none}
+html.onk-lees-pijlen .onk-pijl.is-off{opacity:0;pointer-events:none}
+html.onk-lees-pijlen.onk-scrolling:not(.onk-has-side) nav.onk-tabbar{transform:translateY(150%)!important;pointer-events:none}
+html.onk-lees-pijlen:not(.onk-has-side) nav.onk-tabbar{transition:transform .35s cubic-bezier(.4,0,.2,1)}
+html.onk-lees-pijlen.onk-scrolling .onk-ftel{opacity:0;transform:translateY(160px);pointer-events:none}
+.onk-ftel{transition:opacity .35s cubic-bezier(.4,0,.2,1),transform .35s cubic-bezier(.4,0,.2,1)}
+
+/*onk-zoeken-overlay*/
+/* De zoekpagina schuift in de pagina open (iframe) bij een tik op het vergrootglas; onderbalk of zijbalk van de app blijft erboven zichtbaar. */
+.onk-srch-ov{position:fixed;top:0;bottom:0;left:0;right:0;z-index:37;background:var(--paper,#f4f6f7);transform:translateY(32px);opacity:0;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .26s ease}
+.onk-srch-ov.in{transform:none;opacity:1}
+.onk-srch-ov.out{transform:translateY(32px);opacity:0;pointer-events:none}
+.onk-srch-ov iframe{width:100%;height:100%;border:0;display:block;background:transparent;opacity:0;transition:opacity .2s ease}
+.onk-srch-ov.ready iframe{opacity:1}
+html.onk-has-side:not(.onk-side-right) .onk-srch-ov{left:var(--onk-sbw,232px)}
+html.onk-has-side.onk-side-right .onk-srch-ov{right:var(--onk-sbw,232px)}
+
+/*onk-focusknop-weg-telefoon*/
+/* De ronde focusknop (4 hoeken) is weg op telefoon en tablet: de onderbalk schuift nu bij het scrollen vanzelf weg. De focusfunctie zelf (html.onk-focus-tel, code in bible.js) blijft bestaan; alleen de knop wordt niet meer getoond. */
+.onk-ftel{display:none!important}
+
+/*onk-hoofdstuktitel*/
+/* Titel van het hoofdstuk (bijv. "De schepping") tussen "Genesis 1" en vers 1, zoals bij YouVersion: iets groter en vetter dan de tekst, kleiner dan de hoofdkop. Alleen in de hoofdstukweergave, in NL en EN. */
+.onk-chap-title{font-family:'DM Sans',Inter,system-ui,sans-serif;font-weight:700;font-size:1.2rem;line-height:1.3;letter-spacing:-.005em;margin:1.1rem 0 0;color:inherit;opacity:.95}
+@media (min-width:768px){.onk-chap-title{font-size:1.28rem}}
+
+/*onk-focus-telefoon-standen*/
+/* Focus op telefoon en tablet, te kiezen in Meer > Focusmodus. Beide standen zijn gelijk (onderbalk en pijlen blijven en schuiven bij scrollen weg), alleen de kop verschilt: met kop (html.onk-focus-tel-kop) blijft de kop zichtbaar, zonder kop (html.onk-focus-tel) is de kop weg. Sluiten zonder kop: tik op Bijbel in de onderbalk (er is geen losse knop meer). */
+
+/*onk-kopje-bij-vers*/
+/* Kopjes (hoofdstuktitel en tussenkopjes in de tekst) horen bij het vers eronder, zoals bij YouVersion: klein stukje ruimte ertussen in plaats van een lege regel. */
+.onk-chap-title+.onk-read-text{margin-top:.15rem!important}
+.onk-read-text span.block.font-sans.font-bold{margin-bottom:.05rem!important}
+
+/*onk-pijlen-vorm*/
+/* Vorm van de hoofdstukpijlen (telefoon en computer): afgeronde vierkante knop, zoals de zijbalkknop, in plaats van een rondje. */
+button.fixed[aria-label*="hoofdstuk"],button.fixed[aria-label*="chapter"],.onk-pijl{border-radius:14px!important}
+
+/*onk-pijlen-een-set*/
+/* Er staat nooit meer dan één stel hoofdstukpijlen in beeld: de computerpijlen (zijkanten) alleen waar de zijbalk of een computerfocus is, de telefoonpijlen (boven de onderbalk, .onk-pijl) alleen waar de onderbalk staat. Voorkomt vier pijlen op een tablet of in een smal venster. */
+html:not(.onk-has-side):not(.onk-focus):not(.onk-focus-kop) button.fixed[aria-label*="hoofdstuk"]:not(.onk-pijl),html:not(.onk-has-side):not(.onk-focus):not(.onk-focus-kop) button.fixed[aria-label*="chapter"]:not(.onk-pijl){display:none!important}
+
+/*onk-kop-vorm-afgerond*/
+/* Knoppen in de leeskop (zoeken, Genesis-balk, Meer, instellingen, kanttekeningen): afgeronde vierkante vorm (14 px) in plaats van rondjes, op telefoon en computer; gelijk aan de hoofdstukpijlen en de zijbalkknop. Besluit 2026-11-28 na voorbeeldafbeelding. */
+html:not(#a):not(#b):not(#c) div.relative.z-10.flex:has(> .library-scroll) button,html:not(#a):not(#b):not(#c) div.relative.z-10.flex:has(> .library-scroll) .onk-meer,html:not(#a):not(#b):not(#c) div.relative.z-10.flex:has(> .library-scroll) .library-scroll>button,html:not(#a):not(#b):not(#c) div.relative.z-10.flex:has(> .library-scroll) .library-scroll>div:first-child>button{border-radius:14px!important}
+
+/*onk-onderbalk-labels-nooit-in-elkaar*/
+/* Onderbalk (telefoon, tablet): labels lopen nooit in elkaar, ook niet bij een grotere tekstgrootte van het toestel. Tabs delen de ruimte naar inhoud, het label schaalt met de breedte (9 tot 11 px) en wordt als laatste redmiddel afgekapt in plaats van over de buur te lopen. */
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  nav.onk-tabbar .onk-tab{flex:1 1 auto!important;min-width:0!important;overflow:hidden;padding-left:2px!important;padding-right:2px!important}
+  nav.onk-tabbar .onk-tab>span:last-child{font-size:clamp(9px,2.6vw,11px)!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0!important;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+}
+
+/*onk-onderbalk-kleuren*/
+/* Eén kleurstelling voor de onderbalk op elk toestel en elke breedte (telefoon, tablet, smal venster): actief = blauw (--terracotta), niet actief = grijs (--ink-muted). Zo is de balk op tablet gelijk aan die op telefoon. */
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  nav.onk-tabbar .onk-tab{color:var(--ink-muted,#9aa7af)!important;font-weight:500!important}
+  nav.onk-tabbar .onk-tab.is-on,nav.onk-tabbar .onk-tab[aria-current="page"]{color:var(--terracotta,#3C5E70)!important;font-weight:600!important}
+}
+
+/*onk-kop-tekst-ruimte-telefoon*/
+/* Telefoon: minder lege ruimte tussen de kop (Genesis 3, Heel hoofdstuk, SV) en de tekst of het tijdlijnkopje daaronder, zodat het kopje niet zo laag op de pagina staat. */
+@media (max-width:767px){
+  .onk-read-line{margin-bottom:0!important;padding-bottom:0!important}
+  .onk-read-text{margin-top:.6rem!important}
+}
+
+/*onk-vorige-volgende-weg*/
+/* De tekstknoppen Vorige / Volgende onderaan het hoofdstuk zijn weg: op elk toestel staan nu de pijlen (telefoon en tablet boven de onderbalk, computer aan de zijkanten). De knoppen blijven onzichtbaar in de pagina, want de pijlen klikken ze (en lezen hun uitgeschakeld-stand). */
+.onk-nav{display:none!important}
+.onk-nav-zone{min-height:0!important;margin-top:2rem!important}
+
+html.onk-srch-open .onk-mm,html.onk-srch-open .onk-pk,html.onk-srch-open .bible-ver-menu{display:none!important}
+
+/*onk-hoofdstuktitel-parallel*/
+/* Parallel: de hoofdstuktitel staat per kolom onder de vertaalnaam, in de taal van die vertaling (KJV Engels, de rest Nederlands). */
+.onk-chap-title-par{margin:0 0 .35rem;font-size:1.02rem}
+
+/*onk-focus-sluitknop*/
+/* Focus op telefoon en tablet: klein rondje rechtsboven om de focus uit te zetten (kop, zoeken en menu komen terug). Alleen zichtbaar als focus aan staat; schuift bij scrollen even weg. */
+html.onk-focus-tel .onk-ftel{display:grid!important;top:calc(env(safe-area-inset-top,0px) + 8px)!important;bottom:auto!important;right:10px!important;width:36px!important;height:36px!important;border-radius:12px!important;opacity:.9;z-index:60}
+html.onk-focus-tel .onk-ftel svg{width:18px;height:18px}
+html.onk-focus-tel.onk-scrolling .onk-ftel{opacity:0!important;transform:translateY(-70px)!important;pointer-events:none}
+
+/*onk-focus-sluitknop-computer*/
+/* Computer, Focus zonder kop: klein sluitknopje rechtsboven (naast Esc), zodat je altijd terug kunt naar kop en zijbalk. */
+.onk-fexit{display:none}
+html.onk-focus .onk-fexit{display:grid;position:fixed;top:12px;right:14px;width:36px;height:36px;border-radius:12px;place-items:center;background:var(--surface,#fff);color:var(--ink-soft,#3C5E70);border:1px solid rgba(29,43,51,.1);box-shadow:0 4px 14px rgba(0,0,0,.14);z-index:60;cursor:pointer}
+html.onk-focus .onk-fexit svg{width:18px;height:18px}
+
+/*onk-focus-tekst-tot-boven*/
+/* Focus (kop weg): de tekst loopt tot de bovenrand van het scherm in plaats van onder een lege balk te verdwijnen. De dekbalk bovenaan (die de tekst onder de kop afdekte) krijgt alleen nog de hoogte van de statusbalk (safe area, 0 op toestellen zonder) en een zachte uitloop. */
+html.onk-focus-tel div.fixed.inset-x-0.top-0.z-20[aria-hidden="true"],html.onk-focus div.fixed.inset-x-0.top-0.z-20[aria-hidden="true"]{height:env(safe-area-inset-top,0px)!important;min-height:0!important;background:linear-gradient(var(--paper,#f4f6f7),rgba(244,246,247,0))!important;transition:height .25s ease}
+html.onk-focus-tel div.relative.z-10.flex:has(> .library-scroll){padding:0!important;margin:0!important;border:0!important;min-height:0!important;height:0!important}

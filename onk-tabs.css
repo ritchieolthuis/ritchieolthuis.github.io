@@ -8,7 +8,7 @@
 .w-5{width:1.25rem}
 .w-6{width:1.5rem}
 .onk-tabbar, .onk-more, .onk-more-bg{display:none}
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
   .onk-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:38;display:flex;background:#fff;border-top:1px solid rgba(29,43,51,.1);padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.06)}
   .onk-tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;padding:6px 0 2px;font:500 11px/1.2 Inter,system-ui,sans-serif;color:#9aa7af;cursor:pointer;white-space:nowrap}
   .onk-tab.is-on{color:#3C5E70;font-weight:600}
@@ -82,7 +82,7 @@ nav.onk-tabbar::before{transition:color .2s ease!important;pointer-events:none}
   .onk-tabbar .onk-tab{flex:1 1 0!important;width:auto!important;min-width:0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;padding:6px 0 2px!important;background:none!important;border-radius:0!important;margin:0!important}
   .onk-tabbar .onk-tab>span:last-child{display:block!important;font-size:11px!important;line-height:1.2!important;font-weight:500!important;white-space:nowrap!important}
 }
-@media (pointer:coarse) and (max-width:1199px),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse) and (max-width:1199px),(pointer:fine) and (max-width:479px){
   .onk-tabbar{display:flex!important;position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;height:auto!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;gap:0!important;padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px))!important;background:#fff!important;border-top:1px solid rgba(29,43,51,.1)!important;border-right:0!important;box-shadow:0 -4px 18px rgba(0,0,0,.06)!important;z-index:38!important}
   .onk-tabbar::before, .onk-tabbar::after{display:none!important;content:none!important}
   .onk-tabbar .onk-tab{flex:1 1 0!important;width:auto!important;min-width:0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;padding:6px 0 2px!important;background:none!important;border-radius:0!important;margin:0!important}
@@ -95,7 +95,6 @@ html.onk-focus-kop nav.onk-tabbar{display:none!important}
 @media (min-width:768px){
   html.onk-focus-kop nav.onk-tabbar{display:none!important}
 }
-html.onk-focus-tel nav.onk-tabbar{display:none!important}
 html.onk-anim .onk-tab.is-on .onk-tab-ic svg{animation:onkAIconPop .5s var(--onk-spring)}
 html.onk-anim .onk-more{animation:onkASheet .55s var(--onk-spring) both}
 html.onk-anim .onk-more-bg{animation:onkADim .35s ease both}
@@ -109,13 +108,13 @@ html.onk-anim .onk-more-row:nth-child(7){animation-delay:.345s}
 html.onk-anim .onk-more-row:nth-child(8){animation-delay:.39s}
 html.onk-anim .onk-more-row:nth-child(9){animation-delay:.435s}
 html.onk-anim .onk-more-row:nth-child(10){animation-delay:.48s}
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
-  html:not(.onk-focus-tel) .onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important;padding:8px 6px!important;overflow:hidden}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  html .onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important;padding:8px 6px!important;overflow:hidden}
   .onk-tabbar .onk-tab{padding:6px 0 4px!important}
   .onk-tabbar .onk-tab-ic svg{width:26px!important;height:26px!important}
   .onk-more{bottom:calc(94px + env(safe-area-inset-bottom,0px))!important;border-radius:22px!important}
 }
-@media (pointer:coarse),(pointer:fine) and (max-width:900px){
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
   nav.onk-tabbar .onk-tab{flex:1 1 0!important;min-width:max-content!important;padding-left:4px!important;padding-right:4px!important}
 }
 @media (max-width:430px){
@@ -126,17 +125,17 @@ html.onk-anim .onk-more-row:nth-child(10){animation-delay:.48s}
   nav.onk-tabbar::after{content:"Bijbel Online";position:absolute;left:62px;top:10px;height:40px;line-height:40px;max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700;color:#1d2b33;pointer-events:none;background:none}
   html.onk-side-closed nav.onk-tabbar::after{color:transparent}
 }
-@media (pointer:fine) and (max-width:900px){
+@media (pointer:fine) and (max-width:479px){
   .onk-tabbar::before, .onk-tabbar::after{display:none!important;content:none!important}
   nav.onk-tabbar{display:flex!important;position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;height:auto!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;gap:0!important;padding:4px 4px calc(6px + env(safe-area-inset-bottom,0px))!important;background:#fff!important;border-top:1px solid rgba(29,43,51,.1)!important;border-right:0!important;border-left:0!important;box-shadow:0 -4px 18px rgba(29,43,51,.06)!important;z-index:38!important}
   nav.onk-tabbar .onk-tab{flex:1 1 0!important;width:auto!important;min-width:0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;padding:6px 0 2px!important;background:none!important;border-radius:0!important;margin:0!important}
   nav.onk-tabbar .onk-tab>span:last-child{display:block!important;font-size:11px!important;line-height:1.2!important;font-weight:500!important;white-space:nowrap!important}
-  html:not(.onk-focus-tel) nav.onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(29,43,51,.12)!important;padding:8px 6px!important;overflow:hidden}
+  html nav.onk-tabbar{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;top:auto!important;border:1px solid rgba(29,43,51,.08)!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(29,43,51,.12)!important;padding:8px 6px!important;overflow:hidden}
   nav.onk-tabbar .onk-tab{padding:6px 0 4px!important}
   nav.onk-tabbar .onk-tab-ic svg{width:26px!important;height:26px!important}
 }
-@media (min-width:600px) and (max-width:900px),(pointer:coarse) and (min-width:600px){
-  html:not(.onk-focus-tel) nav.onk-tabbar{left:0!important;right:0!important;margin-left:auto!important;margin-right:auto!important;width:min(540px,calc(100% - 24px))!important}
+@media (pointer:coarse) and (min-width:600px){
+  html nav.onk-tabbar{left:0!important;right:0!important;margin-left:auto!important;margin-right:auto!important;width:min(540px,calc(100% - 24px))!important}
 }
 .onk-tab[hidden]{display:none}
 .onk-sugg .onk-tab, .onk-home-panel .onk-tab{display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:999px;border:1px solid transparent;background:none;font-size:15px;font-weight:600;color:#6b7a83;cursor:pointer}
@@ -158,3 +157,13 @@ html.onk-anim .onk-more-row:nth-child(10){animation-delay:.48s}
 .onk-tab.on .onk-sg-groen{background:#7db928;color:#fff}
 .onk-tab.on .onk-sg-donker{background:#3c5e70;color:#fff}
 .onk-tab .onk-sg-ic{transition:background .15s ease,color .15s ease}
+nav.onk-tabbar .onk-ind{position:absolute;top:-1px;left:0;height:2px;pointer-events:none}
+html:not(.onk-anim) nav.onk-tabbar .onk-ind{display:none!important}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  nav.onk-tabbar .onk-tab{flex:1 1 auto!important;min-width:0!important;overflow:hidden;padding-left:2px!important;padding-right:2px!important}
+  nav.onk-tabbar .onk-tab>span:last-child{font-size:clamp(9px,2.6vw,11px)!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0!important;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+}
+@media (pointer:coarse),(pointer:fine) and (max-width:479px){
+  nav.onk-tabbar .onk-tab{color:var(--ink-muted,#9aa7af)!important;font-weight:500!important}
+  nav.onk-tabbar .onk-tab.is-on, nav.onk-tabbar .onk-tab[aria-current="page"]{color:var(--terracotta,#3C5E70)!important;font-weight:600!important}
+}
