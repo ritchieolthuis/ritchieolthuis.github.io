@@ -2649,3 +2649,7 @@ html.onk-focus .onk-fexit svg{width:18px;height:18px}
 /* Focus (kop weg): de tekst loopt tot de bovenrand van het scherm in plaats van onder een lege balk te verdwijnen. De dekbalk bovenaan (die de tekst onder de kop afdekte) krijgt alleen nog de hoogte van de statusbalk (safe area, 0 op toestellen zonder) en een zachte uitloop. */
 html.onk-focus-tel div.fixed.inset-x-0.top-0.z-20[aria-hidden="true"],html.onk-focus div.fixed.inset-x-0.top-0.z-20[aria-hidden="true"]{height:env(safe-area-inset-top,0px)!important;min-height:0!important;background:linear-gradient(var(--paper,#f4f6f7),rgba(244,246,247,0))!important;transition:height .25s ease}
 html.onk-focus-tel div.relative.z-10.flex:has(> .library-scroll){padding:0!important;margin:0!important;border:0!important;min-height:0!important;height:0!important}
+
+/*onk-pijlen-onder-uitklappers*/
+/* Regel (user, 2026-11-28): alles wat in de kop openklapt (kiezer, menu, instellingen, tijdlijn, zoeken) valt OVER alles heen, ook over de hoofdstukpijlen en de onderbalk. De pijlen liggen daarom op de laagste vaste laag (z 5), onder elke uitklapper (z 10 en hoger). Zie Website-rules.md, sectie Layers. */
+.onk-pijl,button.fixed[aria-label*="hoofdstuk"],button.fixed[aria-label*="chapter"]{z-index:5!important}

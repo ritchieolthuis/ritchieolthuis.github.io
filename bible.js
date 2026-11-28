@@ -4378,11 +4378,14 @@ setInterval(ensure,400);ensure();
   }
   function make(cls,svg,label){var b=document.createElement('button');b.type='button';b.className='onk-pijl '+cls;b.setAttribute('aria-label',label);b.innerHTML=svg;document.body.appendChild(b);return b}
   function ensure(){
-    if(L)return;
+    if(L){attach();return}
     L=make('onk-pijl-l',CH,en()?'Previous chapter':'Vorig hoofdstuk');R=make('onk-pijl-r',CHR,en()?'Next chapter':'Volgend hoofdstuk');
     L.addEventListener('click',function(e){e.preventDefault();var b=navBtns();if(b&&b.p&&!b.p.disabled)b.p.click()});
     R.addEventListener('click',function(e){e.preventDefault();var b=navBtns();if(b&&b.n&&!b.n.disabled)b.n.click()});
+    attach();
   }
+  /* de pijlen horen BINNEN de leescontainer (z lager dan de kop), zodat alles wat in de kop openklapt eroverheen valt */
+  function attach(){var h=document.querySelector('div.relative.z-10.flex:has(> .library-scroll)'),c=h&&h.closest('.fixed.inset-0');if(c&&L&&L.parentNode!==c){c.appendChild(L);c.appendChild(R)}}
   function bottomBarMode(){return window.matchMedia('(pointer:coarse),(pointer:fine) and (max-width:479px)').matches}
   function refresh(){
     var b=bottomBarMode()?navBtns():null;
